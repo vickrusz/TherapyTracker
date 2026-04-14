@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import Patients from "./pages/Patients";
 import AddPatient from "./pages/AddPatient";
+import PatientDetail from "./pages/PatientDetail";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/patients" element={<Patients />} />
           <Route path="/patients/new" element={<AddPatient />} />
+          <Route path="/patients/:id" element={<PatientDetail />} />
         </Routes>
       </main>
     </div>

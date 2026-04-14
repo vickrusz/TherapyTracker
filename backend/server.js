@@ -14,6 +14,7 @@ app.get("/api/health", (req, res) => {
   res.json({ message: "API is running" });
 });
 
+// This is to get all the patients onto the patients page
 app.get("/api/patients", async (req, res) => {
   try {
     const patients = await prisma.patient.findMany({
@@ -26,6 +27,26 @@ app.get("/api/patients", async (req, res) => {
   }
 });
 
+// We need a route to get one patient's detail or information.
+app.get("/api/patients/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const patient = await prisma.patient.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    if (!patient) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+
+    res.json(patient);
+  } catch (error) {}
+});
+
+// This is to create a new patient
 app.post("/api/patients", async (req, res) => {
   try {
     const { nickname, fullName, initialEvalDate, frequencyNotes, status } =

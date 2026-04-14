@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getPatients } from "../services/patientApi";
+import { Link } from "react-router-dom";
 
 export default function Patients() {
   const [patients, setPatients] = useState([]);
@@ -35,28 +36,27 @@ export default function Patients() {
       ) : (
         <ul>
           {patients.map((patient) => (
-          <div key={patient.id} style={{
-            border: "1px solid #ccc",
-            padding: "12px",
-            marginBottom: "10px",
-            borderRadius: "8px",
-            backgroundColor: "#fafafa"
-          }}>
+            <div
+              key={patient.id}
+              style={{
+                border: "1px solid #ccc",
+                padding: "12px",
+                marginBottom: "10px",
+                borderRadius: "8px",
+                backgroundColor: "#fafafa",
+              }}
+            >
+              <div style={{ fontSize: "18px", fontWeight: "bold" }}>
+                {patient.nickname}
+              </div>
 
-          <div style={{ fontSize: "18px", fontWeight: "bold" }}>
-            {patient.nickname}
-          </div>
-      
-          <div style={{ color: "#555" }}>
-            {patient.fullName}
-          </div>
-      
-          <button style={{ marginTop: "8px" }}>
-            View Details
-          </button>
-        </div>
-         
-    ))}    
+              <div style={{ color: "#555" }}>{patient.fullName}</div>
+
+              <Link to={`/patients/${patient.id}`}>
+                <button type="button">View Details</button>
+              </Link>
+            </div>
+          ))}
         </ul>
       )}
     </div>

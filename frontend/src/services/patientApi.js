@@ -1,6 +1,6 @@
 const API_BASE_URL = "http://localhost:5000/api";
 
-// This is for the GET request
+// This is for the GET request many patients
 export async function getPatients() {
   const response = await fetch(`${API_BASE_URL}/patients`);
 
@@ -24,5 +24,15 @@ export async function createPatient(patientData) {
     throw new Error("Failed to create patient");
   }
 
+  return response.json();
+}
+
+// This is for getting one patient at a time
+export async function getPatientById(id) {
+  const response = await fetch(`http://localhost:5000/api/patients/${id}`);
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch patient");
+  }
   return response.json();
 }
