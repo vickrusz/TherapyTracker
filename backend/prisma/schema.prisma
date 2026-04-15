@@ -18,5 +18,20 @@ model Patient {
   initialEvalDate DateTime
   frequencyNotes  String?
   status          String   @default("active")
+
+  address         String?
+  phoneNumber     String?
+
   createdAt       DateTime @default(now())
+  visits          Visit[]
+}
+
+model Visit {
+  id              Int      @id @default(autoincrement())
+  visitDate       DateTime
+  visitType       String
+  notes           String?
+  createdAt       DateTime @default(now())
+  patientId       Int
+  patient         Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
 }
