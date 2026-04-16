@@ -46,6 +46,26 @@ app.get("/api/patients/:id", async (req, res) => {
   } catch (error) {}
 });
 
+app.get("/api/patients/:id/visits", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const visits = await prisma.visit.findMany({
+      where: {
+        patientId: Number(id),
+      },
+      orderBy: {
+        visitDate: "desc",
+      },
+    });
+
+    res.json(visits);
+  } catch (error) {
+    console.error("Error fetching visits:", error);
+    res.status(500).json({ error: "Failed to fetch visits" });
+  }
+});
+
 // This is to create a new patient
 app.post("/api/patients", async (req, res) => {
   try {
@@ -72,6 +92,33 @@ app.post("/api/patients", async (req, res) => {
   } catch (error) {
     console.error("Error creating patient:", error);
     res.status(500).json({ error: "Failed to create patient" });
+  }
+});
+
+app.post("/api/patients/:id/visits", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { visitDate, visitType, notes } = req.body;
+
+    if (!visitDate || !visitType) {
+      return res.status(400).json({
+        error: "visitDate and visitType are required",
+      });
+    }
+
+    const newVisit = await prisma.visit.create({
+      data: {
+        visitDate: new Date(visitDate),
+        visitType,
+        notes: notes || null,
+        patientId: Number(id),
+      },
+    });
+
+    res.status(201).json(newVisit);
+  } catch (error) {
+    console.error("Error creating visit:", error);
+    res.status(500).json({ error: "Failed to create visit" });
   }
 });
 
