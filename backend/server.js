@@ -95,6 +95,7 @@ app.post("/api/patients", async (req, res) => {
   }
 });
 
+// This is to add a Visit to an existing patient
 app.post("/api/patients/:id/visits", async (req, res) => {
   try {
     const { id } = req.params;

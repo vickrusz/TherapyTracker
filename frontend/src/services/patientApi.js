@@ -11,7 +11,7 @@ export async function getPatients() {
   return response.json();
 }
 
-// This is for the POST request
+// This is for the POST request to create a patient
 export async function createPatient(patientData) {
   const response = await fetch(`${API_BASE_URL}/patients`, {
     method: "POST",
@@ -34,5 +34,19 @@ export async function getPatientById(id) {
   if (!response.ok) {
     throw new Error("Failed to fetch patient");
   }
+  return response.json();
+}
+
+// This is to retrieve a patient's visits
+
+export async function getVisitsByPatient(id) {
+  const response = await fetch(
+    `http://localhost:5000/api/patients/${id}/visits`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch visits");
+  }
+
   return response.json();
 }
