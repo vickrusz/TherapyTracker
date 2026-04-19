@@ -38,7 +38,6 @@ export async function getPatientById(id) {
 }
 
 // This is to retrieve a patient's visits
-
 export async function getVisitsByPatient(id) {
   const response = await fetch(
     `http://localhost:5000/api/patients/${id}/visits`
@@ -48,5 +47,24 @@ export async function getVisitsByPatient(id) {
     throw new Error("Failed to fetch visits");
   }
 
+  return response.json();
+}
+
+// This is to create a visit for a patient
+export async function createVisit(patientId, visitData) {
+  const response = await fetch(
+    `http://localhost:5000/api/patients/${patientId}/visits`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(visitData),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to create visit");
+  }
   return response.json();
 }
