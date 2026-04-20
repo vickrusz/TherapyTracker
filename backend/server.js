@@ -123,6 +123,55 @@ app.post("/api/patients/:id/visits", async (req, res) => {
   }
 });
 
+// GET the interventions (ther ex, ther act, neuro reed or gait) from the visit
+app.get("/api/visits/:visitId/interventions", async (req, res) => {
+  try {
+    const { visitId } = req.params;
+
+    const interventions = await prisma.visitIntervention.findMany({
+      where: {
+        visitId: Number(visitId),
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    res.json(interventions);
+  } catch (error) {
+    console.error("Error fetching interventions:", error);
+    res.status(500).json({ error: "Failed to fetch interventions" });
+  }
+});
+
+// Create an intervention for a visit
+app.post("/api/visits/:visitId/interventions", async (req, res) => {
+  try {
+    const { visitId } = req.params;
+    const { category, minutes, notes } = req.body;
+
+    if (!category || !minutes) {
+      return res.status(400).json({
+        error: "category and minutes are required",
+      });
+    }
+
+    const newIntervention = await prisma.visitIntervention.create({
+      data: {
+        category,
+        minutes: Number(minutes),
+        notes: notes || null,
+        visitId: Number(visitId),
+      },
+    });
+
+    res.status(201).json(newIntervention);
+  } catch (error) {
+    console.error("Error creating intervention:", error);
+    res.status(500).json({ error: "Failed to create intervention" });
+  }
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

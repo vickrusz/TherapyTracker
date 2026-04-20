@@ -27,11 +27,27 @@ model Patient {
 }
 
 model Visit {
-  id              Int      @id @default(autoincrement())
-  visitDate       DateTime
-  visitType       String
-  notes           String?
-  createdAt       DateTime @default(now())
-  patientId       Int
-  patient         Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  id                  Int      @id @default(autoincrement())
+  visitDate           DateTime
+  visitType           String
+  notes               String?
+  responseToTreatment String?
+  totalMinutes        Int?
+  quickCapture        String?
+  createdAt           DateTime @default(now())
+
+  patientId           Int
+  patient             Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  interventions       VisitIntervention[]
+}
+
+model VisitIntervention {
+  id            Int    @id @default(autoincrement())
+  category      String
+  minutes       Int
+  notes         String?
+  createdAt     DateTime @default(now())
+  visitId       Int
+  visit         Visit  @relation(fields: [visitId], references: [id], onDelete: Cascade)
 }
