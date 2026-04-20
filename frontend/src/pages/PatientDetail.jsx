@@ -81,7 +81,7 @@ export default function PatientDetail() {
       <button type="button" onClick={() => setShowForm((prev) => !prev)}>
         {showForm ? "Cancel" : "+ Add Visit"}
       </button>
-      {showForm} && (
+      {showForm}
       <form
         onSubmit={handleVisitSubmit}
         style={{ marginTop: "1rem", marginBottom: "1rem" }}
@@ -126,7 +126,7 @@ export default function PatientDetail() {
         <br />
         <button type="submit">Save Visit</button>
       </form>
-      )
+
       {visits.length === 0 ? (
         <p>No visits yet.</p>
       ) : (
