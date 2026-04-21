@@ -43,11 +43,11 @@ model Visit {
 }
 
 model VisitIntervention {
-  id            Int    @id @default(autoincrement())
-  category      String
-  minutes       Int
-  notes         String?
-  createdAt     DateTime @default(now())
-  visitId       Int
-  visit         Visit  @relation(fields: [visitId], references: [id], onDelete: Cascade)
+  id                Int    @id @default(autoincrement())
+  category          String
+  minutes           Int
+  clinicalDetails   String?
+  createdAt         DateTime @default(now())
+  visitId           Int
+  visit             Visit  @relation(fields: [visitId], references: [id], onDelete: Cascade)
 }
