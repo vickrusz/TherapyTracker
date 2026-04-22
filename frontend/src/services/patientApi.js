@@ -68,3 +68,36 @@ export async function createVisit(patientId, visitData) {
   }
   return response.json();
 }
+
+// Get the interventions from the visit
+export async function getInterventionsByVisit(visitId) {
+  const res = await fetch(
+    `http://localhost:5000/api/visits/${visitId}/interventions`
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch interventions");
+  }
+
+  return res.json();
+}
+
+// Creating new interventions and save in a visit
+export async function createIntervention(visitId, data) {
+  const res = await fetch(
+    `http://localhost:5000/api/visits/${visitId}/interventions`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to create intervention");
+  }
+
+  return res.json();
+}
