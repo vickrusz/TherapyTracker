@@ -4,6 +4,7 @@ import {
   getPatientById,
   getVisitsByPatient,
   createVisit,
+  createIntervention,
   getInterventionsByVisit,
 } from "../services/patientApi";
 
@@ -13,6 +14,12 @@ export default function PatientDetail() {
   const [patient, setPatient] = useState(null);
   const [visits, setVisits] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [showInterventionForm, setShowInterventionForm] = useState(null);
+  const [interventionForm, setInterventionForm] = useState({
+    category: "gait",
+    minutes: "",
+    clinicalDetails: "",
+  });
   const [visitForm, setVisitForm] = useState({
     visitDate: "",
     visitType: "PT",
@@ -52,6 +59,7 @@ export default function PatientDetail() {
     loadData();
   }, [id]);
 
+  // visit handlers
   function handleVisitChange(e) {
     const { name, value } = e.target;
 
@@ -79,6 +87,52 @@ export default function PatientDetail() {
     } catch (err) {
       console.error(err);
       setError("Could not create visit");
+    }
+  }
+
+  // intervention handlers
+  function handleInterventionChange(e) {
+    const { name, value } = e.target;
+
+    setInterventionForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+
+  async function handleInterventionSubmit(e, visitId) {
+    e.preventDefault();
+
+    try {
+      const newIntervention = await createIntervention(
+        visitId,
+        interventionForm
+      );
+
+      setVisits((prev) =>
+        prev.map((visit) =>
+          visit.id === visitId
+            ? {
+                ...visit,
+                interventions: [
+                  newIntervention,
+                  ...(visit.interventions || []),
+                ],
+              }
+            : visit
+        )
+      );
+
+      setInterventionForm({
+        category: "gait",
+        minutes: "",
+        clinicalDetails: "",
+      });
+
+      setShowInterventionForm(null);
+    } catch (err) {
+      console.error(err);
+      setError("Could not create intervention");
     }
   }
 
@@ -157,6 +211,67 @@ export default function PatientDetail() {
             <li key={visit.id} style={{ marginBottom: "1rem" }}>
               <p>{new Date(visit.visitDate).toLocaleDateString()}</p>
               <p>{visit.visitType}</p>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowInterventionForm((prev) =>
+                    prev === visit.id ? null : visit.id
+                  )
+                }
+              >
+                {showInterventionForm === visit.id
+                  ? "Cancel"
+                  : "+ Add Intervention"}
+              </button>
+
+              {showInterventionForm === visit.id && (
+                <form
+                  onSubmit={(e) => handleInterventionSubmit(e, visit.id)}
+                  style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}
+                >
+                  <div>
+                    <label>Category</label>
+                    <br />
+                    <select
+                      name="category"
+                      value={interventionForm.category}
+                      onChange={handleInterventionChange}
+                    >
+                      <option value="gait">Gait</option>
+                      <option value="therEx">Ther Ex</option>
+                      <option value="therAct">Ther Act</option>
+                      <option value="neuroReed">Neuro Reed</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label>Minutes</label>
+                    <br />
+                    <input
+                      name="minutes"
+                      type="number"
+                      value={interventionForm.minutes}
+                      onChange={handleInterventionChange}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label>Clinical Details</label>
+                    <br />
+                    <input
+                      name="clinicalDetails"
+                      type="text"
+                      value={interventionForm.clinicalDetails}
+                      onChange={handleInterventionChange}
+                    />
+                  </div>
+
+                  <br />
+                  <button type="submit">Save Intervention</button>
+                </form>
+              )}
 
               {visit.interventions && visit.interventions.length > 0 ? (
                 <div>
