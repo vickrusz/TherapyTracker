@@ -24,6 +24,7 @@ export default function PatientDetail() {
     visitDate: "",
     visitType: "PT",
     notes: "",
+    quickCapture: "",
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -81,6 +82,7 @@ export default function PatientDetail() {
         visitDate: "",
         visitType: "PT",
         notes: "",
+        quickCapture: "",
       });
 
       setShowForm(false);
@@ -198,6 +200,19 @@ export default function PatientDetail() {
             />
           </div>
 
+          <div>
+            <label htmlFor="quickCapture">Quick Capture</label>
+            <br />
+            <textarea
+              id="quickCapture"
+              name="quickCapture"
+              value={visitForm.quickCapture}
+              onChange={handleVisitChange}
+              placeholder="TT, BT, GT... BLETE 2# sit/st..."
+              rows={3}
+              style={{ width: "100%" }}
+            />
+          </div>
           <br />
           <button type="submit">Save Visit</button>
         </form>
@@ -211,7 +226,11 @@ export default function PatientDetail() {
             <li key={visit.id} style={{ marginBottom: "1rem" }}>
               <p>{new Date(visit.visitDate).toLocaleDateString()}</p>
               <p>{visit.visitType}</p>
-
+              {visit.quickCapture && (
+                <p>
+                  <strong>Quick Capture:</strong> {visit.quickCapture}
+                </p>
+              )}
               <button
                 type="button"
                 onClick={() =>

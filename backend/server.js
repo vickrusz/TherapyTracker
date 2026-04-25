@@ -99,7 +99,7 @@ app.post("/api/patients", async (req, res) => {
 app.post("/api/patients/:id/visits", async (req, res) => {
   try {
     const { id } = req.params;
-    const { visitDate, visitType, notes } = req.body;
+    const { visitDate, visitType, notes, quickCapture } = req.body;
 
     if (!visitDate || !visitType) {
       return res.status(400).json({
@@ -112,6 +112,7 @@ app.post("/api/patients/:id/visits", async (req, res) => {
         visitDate: new Date(visitDate),
         visitType,
         notes: notes || null,
+        quickCapture: quickCapture || null,
         patientId: Number(id),
       },
     });
