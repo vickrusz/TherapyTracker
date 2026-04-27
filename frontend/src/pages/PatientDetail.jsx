@@ -5,7 +5,6 @@ import {
   getVisitsByPatient,
   createVisit,
   createIntervention,
-  getInterventionsByVisit,
 } from "../services/patientApi";
 
 export default function PatientDetail() {
@@ -23,7 +22,6 @@ export default function PatientDetail() {
   const [visitForm, setVisitForm] = useState({
     visitDate: "",
     visitType: "PT",
-    notes: "",
     quickCapture: "",
   });
   const [loading, setLoading] = useState(true);
@@ -36,19 +34,7 @@ export default function PatientDetail() {
         setPatient(patientData);
 
         const visitsData = await getVisitsByPatient(id);
-
-        const visitsWithInterventions = await Promise.all(
-          visitsData.map(async (visit) => {
-            const interventions = await getInterventionsByVisit(visit.id);
-
-            return {
-              ...visit,
-              interventions,
-            };
-          })
-        );
-
-        setVisits(visitsWithInterventions);
+        setVisits(visitsData);
       } catch (err) {
         console.error(err);
         setError("Could not load data");
@@ -81,7 +67,6 @@ export default function PatientDetail() {
       setVisitForm({
         visitDate: "",
         visitType: "PT",
-        notes: "",
         quickCapture: "",
       });
 
@@ -221,16 +206,28 @@ export default function PatientDetail() {
       {visits.length === 0 ? (
         <p>No visits yet.</p>
       ) : (
-        <ul>
+        <div>
           {visits.map((visit) => (
-            <li key={visit.id} style={{ marginBottom: "1rem" }}>
-              <p>{new Date(visit.visitDate).toLocaleDateString()}</p>
-              <p>{visit.visitType}</p>
+            <div
+              key={visit.id}
+              style={{
+                border: "1px solid #ccc",
+                borderRadius: "8px",
+                padding: "1rem",
+                marginBottom: "1rem",
+              }}
+            >
+              <h3 style={{ marginTop: 0 }}>
+                {new Date(visit.visitDate).toLocaleDateString()} -{" "}
+                {visit.visitType}
+              </h3>
+
               {visit.quickCapture && (
                 <p>
                   <strong>Quick Capture:</strong> {visit.quickCapture}
                 </p>
               )}
+
               <button
                 type="button"
                 onClick={() =>
@@ -241,13 +238,13 @@ export default function PatientDetail() {
               >
                 {showInterventionForm === visit.id
                   ? "Cancel"
-                  : "+ Add Intervention"}
+                  : "+ Add Treatment Section"}
               </button>
 
               {showInterventionForm === visit.id && (
                 <form
                   onSubmit={(e) => handleInterventionSubmit(e, visit.id)}
-                  style={{ marginTop: "0.5rem", marginBottom: "0.5rem" }}
+                  style={{ marginTop: "0.75rem", marginBottom: "1rem" }}
                 >
                   <div>
                     <label>Category</label>
@@ -288,28 +285,36 @@ export default function PatientDetail() {
                   </div>
 
                   <br />
-                  <button type="submit">Save Intervention</button>
+                  <button type="submit">Save Treatment Section</button>
                 </form>
               )}
 
+              <h4>Treatment Sections</h4>
+
               {visit.interventions && visit.interventions.length > 0 ? (
                 <div>
-                  <h4>Interventions</h4>
                   {visit.interventions.map((i) => (
-                    <div key={i.id}>
+                    <div
+                      key={i.id}
+                      style={{
+                        borderLeft: "3px solid #ccc",
+                        paddingLeft: "0.75rem",
+                        marginBottom: "0.75rem",
+                      }}
+                    >
                       <p>
                         <strong>{i.category}</strong> — {i.minutes} min
                       </p>
-                      <p>{i.clinicalDetails}</p>
+                      {i.clinicalDetails && <p>{i.clinicalDetails}</p>}
                     </div>
                   ))}
                 </div>
               ) : (
-                <p>No interventions yet.</p>
+                <p> No treatment sections yet.</p>
               )}
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

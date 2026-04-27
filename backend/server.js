@@ -57,6 +57,13 @@ app.get("/api/patients/:id/visits", async (req, res) => {
       orderBy: {
         visitDate: "desc",
       },
+      include: {
+        interventions: {
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+      },
     });
 
     res.json(visits);
