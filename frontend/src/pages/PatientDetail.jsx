@@ -7,6 +7,10 @@ import {
   createIntervention,
 } from "../services/patientApi";
 
+function getTodayDate() {
+  return new Date().toISOString().split("T")[0];
+}
+
 export default function PatientDetail() {
   const { id } = useParams();
 
@@ -20,7 +24,7 @@ export default function PatientDetail() {
     clinicalDetails: "",
   });
   const [visitForm, setVisitForm] = useState({
-    visitDate: "",
+    visitDate: getTodayDate(),
     visitType: "PT",
     quickCapture: "",
   });
@@ -65,7 +69,7 @@ export default function PatientDetail() {
       setVisits((prev) => [newVisit, ...prev]);
 
       setVisitForm({
-        visitDate: "",
+        visitDate: getTodayDate(), // defaults to today
         visitType: "PT",
         quickCapture: "",
       });
@@ -137,7 +141,11 @@ export default function PatientDetail() {
 
       <h2>Visits</h2>
 
-      <button type="button" onClick={() => setShowForm((prev) => !prev)}>
+      <button
+        type="button"
+        onClick={() => setShowForm((prev) => !prev)}
+        style={{ marginBottom: "1rem" }}
+      >
         {showForm ? "Cancel" : "+ Add Visit"}
       </button>
 
@@ -297,15 +305,14 @@ export default function PatientDetail() {
                     <div
                       key={i.id}
                       style={{
-                        borderLeft: "3px solid #ccc",
                         paddingLeft: "0.75rem",
                         marginBottom: "0.75rem",
                       }}
                     >
-                      <p>
+                      <p style={{ margin: 0 }}>
                         <strong>{i.category}</strong> — {i.minutes} min
                       </p>
-                      {i.clinicalDetails && <p>{i.clinicalDetails}</p>}
+                      <p style={{ margin: 0 }}>{i.clinicalDetails}</p>
                     </div>
                   ))}
                 </div>
