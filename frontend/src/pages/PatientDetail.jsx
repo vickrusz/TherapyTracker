@@ -11,6 +11,9 @@ function getTodayDate() {
   return new Date().toISOString().split("T")[0];
 }
 
+// Patient Detail page displays a single patient, and loads the visits and interventions for that patient
+// Supports fast visit capture and adding treatment sections from the UI
+
 export default function PatientDetail() {
   const { id } = useParams();
 
@@ -31,6 +34,9 @@ export default function PatientDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Load patient details, and that patient's visits.
+  // The visits API returns nested interventions/treatment sections.
+
   useEffect(() => {
     async function loadData() {
       try {
@@ -41,7 +47,7 @@ export default function PatientDetail() {
         setVisits(visitsData);
       } catch (err) {
         console.error(err);
-        setError("Could not load data");
+        setError("Co uld not load data");
       } finally {
         setLoading(false);
       }
@@ -50,7 +56,7 @@ export default function PatientDetail() {
     loadData();
   }, [id]);
 
-  // visit handlers
+  // Update controlled inuts in the Add Visits form
   function handleVisitChange(e) {
     const { name, value } = e.target;
 
@@ -60,6 +66,7 @@ export default function PatientDetail() {
     }));
   }
 
+  // Create a visit, add it to the top of the UI without refreshing
   async function handleVisitSubmit(e) {
     e.preventDefault();
 
@@ -81,7 +88,7 @@ export default function PatientDetail() {
     }
   }
 
-  // intervention handlers
+  // intervention handlers, changes in the Add treatment section form
   function handleInterventionChange(e) {
     const { name, value } = e.target;
 
@@ -91,6 +98,8 @@ export default function PatientDetail() {
     }));
   }
 
+  // Create a treatment section for one visit.
+  // Only the matching visit is updtated in state.
   async function handleInterventionSubmit(e, visitId) {
     e.preventDefault();
 
@@ -138,7 +147,6 @@ export default function PatientDetail() {
       <p>Eval Date: {new Date(patient.initialEvalDate).toLocaleDateString()}</p>
       <p>Status: {patient.status}</p>
       {patient.frequencyNotes && <p>Frequency: {patient.frequencyNotes}</p>}
-
       <h2>Visits</h2>
 
       <button
@@ -148,7 +156,6 @@ export default function PatientDetail() {
       >
         {showForm ? "Cancel" : "+ Add Visit"}
       </button>
-
       {showForm && (
         <form
           onSubmit={handleVisitSubmit}
@@ -182,18 +189,6 @@ export default function PatientDetail() {
           </div>
 
           <div>
-            <label htmlFor="notes">Notes</label>
-            <br />
-            <input
-              id="notes"
-              name="notes"
-              type="text"
-              value={visitForm.notes}
-              onChange={handleVisitChange}
-            />
-          </div>
-
-          <div>
             <label htmlFor="quickCapture">Quick Capture</label>
             <br />
             <textarea
@@ -210,7 +205,6 @@ export default function PatientDetail() {
           <button type="submit">Save Visit</button>
         </form>
       )}
-
       {visits.length === 0 ? (
         <p>No visits yet.</p>
       ) : (
