@@ -46,6 +46,7 @@ app.get("/api/patients/:id", async (req, res) => {
   } catch (error) {}
 });
 
+// GET the visits of a patient
 app.get("/api/patients/:id/visits", async (req, res) => {
   try {
     const { id } = req.params;
@@ -70,6 +71,27 @@ app.get("/api/patients/:id/visits", async (req, res) => {
   } catch (error) {
     console.error("Error fetching visits:", error);
     res.status(500).json({ error: "Failed to fetch visits" });
+  }
+});
+
+// GET the interventions (ther ex, ther act, neuro reed or gait) from the visit
+app.get("/api/visits/:visitId/interventions", async (req, res) => {
+  try {
+    const { visitId } = req.params;
+
+    const interventions = await prisma.visitIntervention.findMany({
+      where: {
+        visitId: Number(visitId),
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    res.json(interventions);
+  } catch (error) {
+    console.error("Error fetching interventions:", error);
+    res.status(500).json({ error: "Failed to fetch interventions" });
   }
 });
 
@@ -131,27 +153,6 @@ app.post("/api/patients/:id/visits", async (req, res) => {
   }
 });
 
-// GET the interventions (ther ex, ther act, neuro reed or gait) from the visit
-app.get("/api/visits/:visitId/interventions", async (req, res) => {
-  try {
-    const { visitId } = req.params;
-
-    const interventions = await prisma.visitIntervention.findMany({
-      where: {
-        visitId: Number(visitId),
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
-    res.json(interventions);
-  } catch (error) {
-    console.error("Error fetching interventions:", error);
-    res.status(500).json({ error: "Failed to fetch interventions" });
-  }
-});
-
 // Create an intervention for a visit
 app.post("/api/visits/:visitId/interventions", async (req, res) => {
   try {
@@ -177,6 +178,36 @@ app.post("/api/visits/:visitId/interventions", async (req, res) => {
   } catch (error) {
     console.error("Error creating intervention:", error);
     res.status(500).json({ error: "Failed to create intervention" });
+  }
+});
+
+app.put("/api/patients/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nickname, fullName, initialEvalDate, frequencyNotes, status } =
+      req.body;
+
+    if (!nickname || !fullName || !initialEvalDate) {
+      return res.status(400).json({
+        error: "nickname, fullName, and initialEvalDate are required",
+      });
+    }
+
+    const updatedPatient = await prisma.patient.update({
+      where: { id: Number(id) },
+      data: {
+        nickname,
+        fullName,
+        initialEvalDate: new Date(initialEvalDate),
+        frequencyNotes: frequencyNotes || null,
+        status: status || "active",
+      },
+    });
+
+    res.json(updatedPatient);
+  } catch (error) {
+    console.error("Error updating patient:", error);
+    res.status(500).json({ error: "Failed to update patient" });
   }
 });
 

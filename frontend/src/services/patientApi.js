@@ -101,3 +101,19 @@ export async function createIntervention(visitId, data) {
 
   return res.json();
 }
+
+export async function updatePatient(id, patientData) {
+  const response = await fetch(`http://localhost:5000/api/patients/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(patientData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update patient");
+  }
+
+  return response.json();
+}

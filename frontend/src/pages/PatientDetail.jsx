@@ -5,6 +5,7 @@ import {
   getVisitsByPatient,
   createVisit,
   createIntervention,
+  updatePatient,
 } from "../services/patientApi";
 
 function getTodayDate() {
@@ -31,6 +32,14 @@ export default function PatientDetail() {
     visitType: "PT",
     quickCapture: "",
   });
+  const [isEditingPatient, setIsEditingPatient] = useState(false);
+  const [patientForm, setPatientForm] = useState({
+    nickname: "",
+    fullName: "",
+    initialEvalDate: "",
+    frequencyNotes: "",
+    status: "active",
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -42,6 +51,15 @@ export default function PatientDetail() {
       try {
         const patientData = await getPatientById(id);
         setPatient(patientData);
+        setPatientForm({
+          nickname: patientData.nickname,
+          fullName: patientData.fullName,
+          initialEvalDate: new Date(patientData.initialEvalDate)
+            .toISOString()
+            .split("T")[0],
+          frequencyNotes: patientData.frequencyNotes || "",
+          status: patientData.status || "active",
+        });
 
         const visitsData = await getVisitsByPatient(id);
         setVisits(visitsData);
@@ -55,6 +73,29 @@ export default function PatientDetail() {
 
     loadData();
   }, [id]);
+
+  // Checking for a change in editing the patient
+  function handlePatientChange(e) {
+    const { name, value } = e.target;
+
+    setPatientForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+
+  async function handlePatientSubmit(e) {
+    e.preventDefault();
+
+    try {
+      const updatedPatient = await updatePatient(id, patientForm);
+      setPatient(updatedPatient);
+      setIsEditingPatient(false);
+    } catch (err) {
+      console.error(err);
+      setError("Could not update patient");
+    }
+  }
 
   // Update controlled inuts in the Add Visits form
   function handleVisitChange(e) {
@@ -142,11 +183,86 @@ export default function PatientDetail() {
 
   return (
     <div>
-      <h1>{patient.nickname}</h1>
-      <p>{patient.fullName}</p>
-      <p>Eval Date: {new Date(patient.initialEvalDate).toLocaleDateString()}</p>
-      <p>Status: {patient.status}</p>
-      {patient.frequencyNotes && <p>Frequency: {patient.frequencyNotes}</p>}
+      {isEditingPatient ? (
+        <form onSubmit={handlePatientSubmit} style={{ marginBottom: "1rem" }}>
+          <div>
+            <label>Nickname</label>
+            <br />
+            <input
+              name="nickname"
+              value={patientForm.nickname}
+              onChange={handlePatientChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Full Name</label>
+            <br />
+            <input
+              name="fullName"
+              value={patientForm.fullName}
+              onChange={handlePatientChange}
+              required
+            />
+          </div>
+          <div>
+            <label>Eval Date</label>
+            <br />
+            <input
+              name="initialEvalDate"
+              type="date"
+              value={patientForm.initialEvalDate}
+              onChange={handlePatientChange}
+              required
+            />
+          </div>
+
+          <div>
+            <label>Frequency</label>
+            <br />
+            <input
+              name="frequencyNotes"
+              value={patientForm.frequencyNotes}
+              onChange={handlePatientChange}
+            />
+          </div>
+
+          <div>
+            <label>Status</label>
+            <br />
+            <select
+              name="status"
+              value={patientForm.status}
+              onChange={handlePatientChange}
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+
+          <br />
+
+          <button type="submit">Save Patient</button>
+          <button type="button" onClick={() => setIsEditingPatient(false)}>
+            Cancel
+          </button>
+        </form>
+      ) : (
+        <div style={{ marginBottom: "1rem" }}>
+          <h1>{patient.nickname}</h1>
+          <p>{patient.fullName}</p>
+          <p>
+            Eval Date: {new Date(patient.initialEvalDate).toLocaleDateString()}
+          </p>
+          <p>Status: {patient.status}</p>
+          {patient.frequencyNotes && <p>Frequency: {patient.frequencyNotes}</p>}
+
+          <button type="button" onClick={() => setIsEditingPatient(true)}>
+            Edit Patient
+          </button>
+        </div>
+      )}
+
       <h2>Visits</h2>
 
       <button
