@@ -27,6 +27,12 @@ export default function PatientDetail() {
     minutes: "",
     clinicalDetails: "",
   });
+  const [editingInterventionId, setEditingInterventionId] = useState(null);
+  const [editInterventionForm, setEditInterventionForm] = useState({
+    category: "gait",
+    minutes: "",
+    clinicalDetails: "",
+  });
   const [visitForm, setVisitForm] = useState({
     visitDate: getTodayDate(),
     visitType: "PT",
@@ -42,6 +48,16 @@ export default function PatientDetail() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  function startEditingIntervention(intervention) {
+    setEditingInterventionId(intervention.id);
+
+    setEditInterventionForm({
+      category: intervention.category,
+      minutes: intervention.minutes,
+      clinicalDetails: intervention.clinicalDetails || "",
+    });
+  }
 
   // Load patient details, and that patient's visits.
   // The visits API returns nested interventions/treatment sections.
@@ -174,6 +190,44 @@ export default function PatientDetail() {
     } catch (err) {
       console.error(err);
       setError("Could not create intervention");
+    }
+  }
+
+  function handleEditInterventionChange(e) {
+    const { name, value } = e.target;
+
+    setEditInterventionForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+
+  async function handleEditInterventionSubmit(e, visitId, interventionId) {
+    e.preventDefault();
+
+    try {
+      const updatedIntervention = await updateIntervention(
+        interventionId,
+        editInterventionForm
+      );
+
+      setVisits((prev) =>
+        prev.map((visit) =>
+          visit.id === visitId
+            ? {
+                ...visit,
+                interventions: visit.interventions.map((i) =>
+                  i.id === interventionId ? updatedIntervention : i
+                ),
+              }
+            : visit
+        )
+      );
+
+      setEditingInterventionId(null);
+    } catch (err) {
+      console.error(err);
+      setError("Could not update intervention");
     }
   }
 
@@ -419,10 +473,64 @@ export default function PatientDetail() {
                         marginBottom: "0.75rem",
                       }}
                     >
-                      <p style={{ margin: 0 }}>
-                        <strong>{i.category}</strong> — {i.minutes} min
-                      </p>
-                      <p style={{ margin: 0 }}>{i.clinicalDetails}</p>
+                      {editingInterventionId === i.id ? (
+                        <form
+                          onSubmit={(e) =>
+                            handleEditInterventionSubmit(e, visit.id, i.id)
+                          }
+                        >
+                          <select
+                            name="category"
+                            value={editInterventionForm.category}
+                            onChange={handleEditInterventionChange}
+                          >
+                            <option value="gait">Gait</option>
+                            <option value="therEx">Ther Ex</option>
+                            <option value="therAct">Ther Act</option>
+                            <option value="neuroReed">Neuro Reed</option>
+                          </select>
+
+                          <input
+                            name="minutes"
+                            type="number"
+                            value={editInterventionForm.minutes}
+                            onChange={handleEditInterventionChange}
+                            required
+                          />
+
+                          <textarea
+                            name="clinicalDetails"
+                            value={editInterventionForm.clinicalDetails}
+                            onChange={handleEditInterventionChange}
+                            rows={4}
+                            style={{ width: "100%" }}
+                          />
+
+                          <button type="submit">Save</button>
+
+                          <button
+                            type="button"
+                            onClick={() => setEditingInterventionId(null)}
+                          >
+                            Cancel
+                          </button>
+                        </form>
+                      ) : (
+                        <>
+                          <p style={{ margin: 0 }}>
+                            <strong>{i.category}</strong> — {i.minutes} min
+                          </p>
+
+                          <p style={{ margin: 0 }}>{i.clinicalDetails}</p>
+
+                          <button
+                            type="button"
+                            onClick={() => startEditingIntervention(i)}
+                          >
+                            Edit
+                          </button>
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
