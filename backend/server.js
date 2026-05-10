@@ -9,6 +9,30 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 
+// Update interventions in the visit
+app.put("/api/interventions/:id", async (req, res) => {
+  try {
+    console.log("PUT intervention route hit", req.params.id, req.body);
+
+    const { id } = req.params;
+    const { category, minutes, clinicalDetails } = req.body;
+
+    const updatedIntervention = await prisma.visitIntervention.update({
+      where: { id: Number(id) },
+      data: {
+        category,
+        minutes: Number(minutes),
+        clinicalDetails: clinicalDetails || null,
+      },
+    });
+
+    res.json(updatedIntervention);
+  } catch (error) {
+    console.error("Error updating intervention:", error);
+    res.status(500).json({ error: "Failed to update intervention" });
+  }
+});
+
 // Test route
 app.get("/api/health", (req, res) => {
   res.json({ message: "API is running" });
@@ -22,7 +46,7 @@ app.get("/api/patients", async (req, res) => {
     });
     res.json(patients);
   } catch (error) {
-    console.error("Error fetching patinets:", error);
+    console.error("Error fetching patients:", error);
     res.status(500).json({ error: "Failed to fetch patients" });
   }
 });
@@ -181,6 +205,7 @@ app.post("/api/visits/:visitId/interventions", async (req, res) => {
   }
 });
 
+// Update the patient infomation
 app.put("/api/patients/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -208,6 +233,24 @@ app.put("/api/patients/:id", async (req, res) => {
   } catch (error) {
     console.error("Error updating patient:", error);
     res.status(500).json({ error: "Failed to update patient" });
+  }
+});
+
+// delete interventions from the visit
+app.delete("/api/interventions/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await prisma.visitIntervention.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    res.json({ message: "intervention deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting intervention:", error);
+    res.status(500).json({ error: "Failed to delete intervention:" });
   }
 });
 

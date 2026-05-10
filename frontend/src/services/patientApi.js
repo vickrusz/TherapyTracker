@@ -101,7 +101,7 @@ export async function createIntervention(visitId, data) {
 
   return res.json();
 }
-
+// update a patient's information
 export async function updatePatient(id, patientData) {
   const response = await fetch(`http://localhost:5000/api/patients/${id}`, {
     method: "PUT",
@@ -113,6 +113,42 @@ export async function updatePatient(id, patientData) {
 
   if (!response.ok) {
     throw new Error("Failed to update patient");
+  }
+
+  return response.json();
+}
+
+// Update the intervention of a patient's visit
+export async function updateIntervention(interventionId, data) {
+  const response = await fetch(
+    `http://localhost:5000/api/interventions/${interventionId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to update intervention");
+  }
+
+  return response.json();
+}
+
+// This deletes an intervention from a patient
+export async function deleteIntervention(interventionId) {
+  const response = await fetch(
+    `http://localhost:5000/api/interventions/${interventionId}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to delete intervention");
   }
 
   return response.json();

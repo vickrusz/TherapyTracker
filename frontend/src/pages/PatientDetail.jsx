@@ -6,6 +6,8 @@ import {
   createVisit,
   createIntervention,
   updatePatient,
+  updateIntervention,
+  deleteIntervention,
 } from "../services/patientApi";
 
 function getTodayDate() {
@@ -228,6 +230,29 @@ export default function PatientDetail() {
     } catch (err) {
       console.error(err);
       setError("Could not update intervention");
+    }
+  }
+
+  // Delete the intervention
+  async function handleDeleteIntervention(visitId, interventionId) {
+    try {
+      await deleteIntervention(interventionId);
+
+      setVisits((prev) =>
+        prev.map((visit) =>
+          visit.id === visitId
+            ? {
+                ...visit,
+                interventions: visit.interventions.filter(
+                  (i) => i.id !== interventionId
+                ),
+              }
+            : visit
+        )
+      );
+    } catch (err) {
+      console.error(err);
+      setError("Could not delete intervention");
     }
   }
 
@@ -528,6 +553,15 @@ export default function PatientDetail() {
                             onClick={() => startEditingIntervention(i)}
                           >
                             Edit
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleDeleteIntervention(visit.id, i.id)
+                            }
+                          >
+                            Delete
                           </button>
                         </>
                       )}
