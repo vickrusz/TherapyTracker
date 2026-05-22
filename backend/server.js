@@ -9,30 +9,6 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 
-// Update interventions in the visit
-app.put("/api/interventions/:id", async (req, res) => {
-  try {
-    console.log("PUT intervention route hit", req.params.id, req.body);
-
-    const { id } = req.params;
-    const { category, minutes, clinicalDetails } = req.body;
-
-    const updatedIntervention = await prisma.visitIntervention.update({
-      where: { id: Number(id) },
-      data: {
-        category,
-        minutes: Number(minutes),
-        clinicalDetails: clinicalDetails || null,
-      },
-    });
-
-    res.json(updatedIntervention);
-  } catch (error) {
-    console.error("Error updating intervention:", error);
-    res.status(500).json({ error: "Failed to update intervention" });
-  }
-});
-
 // Test route
 app.get("/api/health", (req, res) => {
   res.json({ message: "API is running" });
@@ -275,6 +251,30 @@ app.put("/api/patients/:id", async (req, res) => {
   } catch (error) {
     console.error("Error updating patient:", error);
     res.status(500).json({ error: "Failed to update patient" });
+  }
+});
+
+// Update interventions in the visit
+app.put("/api/interventions/:id", async (req, res) => {
+  try {
+    console.log("PUT intervention route hit", req.params.id, req.body);
+
+    const { id } = req.params;
+    const { category, minutes, clinicalDetails } = req.body;
+
+    const updatedIntervention = await prisma.visitIntervention.update({
+      where: { id: Number(id) },
+      data: {
+        category,
+        minutes: Number(minutes),
+        clinicalDetails: clinicalDetails || null,
+      },
+    });
+
+    res.json(updatedIntervention);
+  } catch (error) {
+    console.error("Error updating intervention:", error);
+    res.status(500).json({ error: "Failed to update intervention" });
   }
 });
 
