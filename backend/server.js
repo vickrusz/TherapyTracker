@@ -98,6 +98,48 @@ app.get("/api/patients/:id/visits", async (req, res) => {
   }
 });
 
+// GET the goals that a patient has
+app.get("/api/patients/:id/goals", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const goals = await prisma.patientGoal.findMany({
+      where: { patientId: Number(id) },
+      orderBy: { createdAt: "desc" },
+    });
+
+    res.json(goals);
+  } catch (error) {
+    console.error("Error fetching goals:", error);
+    res.status(500).json({ error: "Failed to fetch goals" });
+  }
+});
+
+// CREATE a new goal for a patient
+app.post("/api/patients/:id/goals", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { goalText, status } = req.body;
+
+    if (!goalText) {
+      return res.status(400).json({ error: "goalText is required" });
+    }
+
+    const newGoal = await prisma.patientGoal.create({
+      data: {
+        goalText,
+        status: status || "in progress",
+        patientId: Number(id),
+      },
+    });
+
+    res.status(201).json(newGoal);
+  } catch (error) {
+    console.error("Error creating goal:", error);
+    res.status(500).json({ error: "Failed to create goal" });
+  }
+});
+
 // GET the interventions (ther ex, ther act, neuro reed or gait) from the visit
 app.get("/api/visits/:visitId/interventions", async (req, res) => {
   try {

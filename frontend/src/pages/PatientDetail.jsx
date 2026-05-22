@@ -5,9 +5,11 @@ import {
   getVisitsByPatient,
   createVisit,
   createIntervention,
+  createGoal,
   updatePatient,
   updateIntervention,
   deleteIntervention,
+  getGoalsByPatient,
 } from "../services/patientApi";
 
 function getTodayDate() {
@@ -34,6 +36,12 @@ export default function PatientDetail() {
     category: "gait",
     minutes: "",
     clinicalDetails: "",
+  });
+  const [goals, setGoals] = useState([]);
+  const [showGoalForm, setShowGoalForm] = useState(false);
+  const [goalForm, setGoalForm] = useState({
+    goalText: "",
+    status: "in progress",
   });
   const [visitForm, setVisitForm] = useState({
     visitDate: getTodayDate(),
@@ -81,9 +89,11 @@ export default function PatientDetail() {
 
         const visitsData = await getVisitsByPatient(id);
         setVisits(visitsData);
+        const goalsData = await getGoalsByPatient(id);
+        setGoals(goalsData);
       } catch (err) {
         console.error(err);
-        setError("Co uld not load data");
+        setError("Could not load data");
       } finally {
         setLoading(false);
       }
@@ -112,6 +122,35 @@ export default function PatientDetail() {
     } catch (err) {
       console.error(err);
       setError("Could not update patient");
+    }
+  }
+
+  // Goal handlers
+  function handleGoalChange(e) {
+    const { name, value } = e.target;
+
+    setGoalForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+
+  async function handleGoalSubmit(e) {
+    e.preventDefault();
+
+    try {
+      const newGoal = await createGoal(id, goalForm);
+
+      setGoals((prev) => [newGoal, ...prev]);
+      setGoalForm({
+        goalText: "",
+        status: "in progress",
+      });
+
+      setShowGoalForm(false);
+    } catch (err) {
+      console.error(err);
+      setError("Could not create goal");
     }
   }
 
@@ -340,6 +379,59 @@ export default function PatientDetail() {
             Edit Patient
           </button>
         </div>
+      )}
+
+      <h2>Goals</h2>
+
+      <button type="button" onClick={() => setShowGoalForm((prev) => !prev)}>
+        {showGoalForm ? "Cancel" : "+ Add Goal"}
+      </button>
+
+      {showGoalForm && (
+        <form onSubmit={handleGoalSubmit} style={{ marginTop: "1rem" }}>
+          <div>
+            <label>Goal</label>
+            <br />
+            <textarea
+              name="goalText"
+              value={goalForm.goalText}
+              onChange={handleGoalChange}
+              rows={3}
+              style={{ width: "100%" }}
+              placeholder="Pt will perform sit to stand transfers with SBA..."
+              required
+            />
+          </div>
+
+          <div>
+            <label>Status</label>
+            <br />
+            <select
+              name="status"
+              value={goalForm.status}
+              onChange={handleGoalChange}
+            >
+              <option value="in progress">In Progress</option>
+              <option value="met">Met</option>
+              <option value="discontinued">Discontinued</option>
+            </select>
+          </div>
+
+          <br />
+          <button type="submit">Save Goal</button>
+        </form>
+      )}
+
+      {goals.length === 0 ? (
+        <p>No goals yet.</p>
+      ) : (
+        <ul>
+          {goals.map((goal) => (
+            <li key={goal.id}>
+              <strong>{goal.status}:</strong> {goal.goalText}
+            </li>
+          ))}
+        </ul>
       )}
 
       <h2>Visits</h2>

@@ -1,4 +1,5 @@
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL =
+  import.meta.env.VITE_BASE_URL || "http://localhost:5000/api";
 
 // This is for the GET request many patients
 export async function getPatients() {
@@ -66,6 +67,34 @@ export async function createVisit(patientId, visitData) {
   if (!response.ok) {
     throw new Error("Failed to create visit");
   }
+  return response.json();
+}
+
+// Get goals of a patient
+export async function getGoalsByPatient(patientId) {
+  const response = await fetch(`${API_BASE_URL}/patients/${patientId}/goals`);
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch goals");
+  }
+
+  return response.json();
+}
+
+// Create the goals of the patient
+export async function createGoal(patientId, goalData) {
+  const response = await fetch(`${API_BASE_URL}/patients/${patientId}/goals`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(goalData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create goal");
+  }
+
   return response.json();
 }
 

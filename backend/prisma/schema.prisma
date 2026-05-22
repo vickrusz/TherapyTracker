@@ -17,6 +17,17 @@ model Patient {
   address         String?
   phoneNumber     String?
   visits          Visit[]
+  goals           PatientGoal[]
+}
+
+model PatientGoal {
+  id          Int       @id @default(autoincrement())
+  goalText    String
+  status      String    @default("in progress")
+  createdAt   DateTime  @default(now())
+
+  patientId   Int
+  patient     Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
 }
 
 model Visit {
