@@ -278,6 +278,27 @@ app.put("/api/interventions/:id", async (req, res) => {
   }
 });
 
+// updating the goals of a patient
+app.put("/api/goals/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { goalText, status } = req.body;
+
+    const updatedGoal = await prisma.patientGoal.update({
+      where: { id: Number(id) },
+      data: {
+        goalText,
+        status: status || "in progress",
+      },
+    });
+
+    res.json(updatedGoal);
+  } catch (error) {
+    console.error("Error updating goal:", error);
+    res.status(500).json({ error: "Failed to update goal" });
+  }
+});
+
 // delete interventions from the visit
 app.delete("/api/interventions/:id", async (req, res) => {
   try {

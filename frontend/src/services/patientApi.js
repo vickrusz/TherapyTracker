@@ -98,6 +98,23 @@ export async function createGoal(patientId, goalData) {
   return response.json();
 }
 
+// Update the goals of a patient
+export async function updateGoal(goalId, goalData) {
+  const response = await fetch(`${API_BASE_URL}/goals/${goalId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(goalData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update goal");
+  }
+
+  return response.json;
+}
+
 // Get the interventions from the visit
 export async function getInterventionsByVisit(visitId) {
   const res = await fetch(

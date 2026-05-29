@@ -8,6 +8,7 @@ import {
   createGoal,
   updatePatient,
   updateIntervention,
+  updateGoal,
   deleteIntervention,
   getGoalsByPatient,
 } from "../services/patientApi";
@@ -40,6 +41,11 @@ export default function PatientDetail() {
   const [goals, setGoals] = useState([]);
   const [showGoalForm, setShowGoalForm] = useState(false);
   const [goalForm, setGoalForm] = useState({
+    goalText: "",
+    status: "in progress",
+  });
+  const [editingGoalId, setEditingGoalId] = useState(null);
+  const [editGoalForm, setEditGoalForm] = useState({
     goalText: "",
     status: "in progress",
   });
