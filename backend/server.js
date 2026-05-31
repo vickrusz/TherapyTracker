@@ -284,8 +284,14 @@ app.put("/api/goals/:id", async (req, res) => {
     const { id } = req.params;
     const { goalText, status } = req.body;
 
+    const goalId = Number(id);
+
+    if (!goalId) {
+      return res.status(400).json({ error: "Valid goal id is required" });
+    }
+
     const updatedGoal = await prisma.patientGoal.update({
-      where: { id: Number(id) },
+      where: { id: goalId },
       data: {
         goalText,
         status: status || "in progress",

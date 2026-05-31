@@ -132,6 +132,8 @@ export default function PatientDetail() {
   }
 
   // Goal handlers
+  console.log("goals:", goals);
+
   function handleGoalChange(e) {
     const { name, value } = e.target;
 
@@ -157,6 +159,43 @@ export default function PatientDetail() {
     } catch (err) {
       console.error(err);
       setError("Could not create goal");
+    }
+  }
+  // The function to be able to Edit goals
+
+  function startEditingGoal(goal) {
+    setEditingGoalId(goal.id);
+
+    setEditGoalForm({
+      goalText: goal.goalText,
+      status: goal.status || "in progress",
+    });
+  }
+
+  function handleEditGoalChange(e) {
+    const { name, value } = e.target;
+
+    setEditGoalForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+
+  async function handleEditGoalSubmit(e, goalId) {
+    e.preventDefault();
+
+    try {
+      const updatedGoal = await updateGoal(goalId, editGoalForm);
+      console.log("updatedGoal from API:", updatedGoal);
+
+      setGoals((prev) =>
+        prev.map((goal) => (goal.id === goalId ? updatedGoal : goal))
+      );
+
+      setEditingGoalId(null);
+    } catch (err) {
+      console.error(err);
+      setError("Could not update goal");
     }
   }
 
@@ -433,8 +472,44 @@ export default function PatientDetail() {
       ) : (
         <ul>
           {goals.map((goal) => (
-            <li key={goal.id}>
-              <strong>{goal.status}:</strong> {goal.goalText}
+            <li key={goal.id} style={{ marginBottom: "0.75rem" }}>
+              {editingGoalId === goal.id ? (
+                <form onSubmit={(e) => handleEditGoalSubmit(e, goal.id)}>
+                  <textarea
+                    name="goalText"
+                    value={editGoalForm.goalText}
+                    onChange={handleEditGoalChange}
+                    rows={3}
+                    style={{ width: "100%" }}
+                    required
+                  />
+
+                  <select
+                    name="status"
+                    value={editGoalForm.status}
+                    onChange={handleEditGoalChange}
+                  >
+                    <option value="in progress">In Progress</option>
+                    <option value="met">Met</option>
+                    <option value="discontinued">Discontinued</option>
+                  </select>
+
+                  <br />
+
+                  <button type="submit">Save</button>
+                  <button type="button" onClick={() => setEditingGoalId(null)}>
+                    Cancel
+                  </button>
+                </form>
+              ) : (
+                <>
+                  <strong>{goal.status}:</strong> {goal.goalText}
+                  <br />
+                  <button type="button" onClick={() => startEditingGoal(goal)}>
+                    Edit
+                  </button>
+                </>
+              )}
             </li>
           ))}
         </ul>

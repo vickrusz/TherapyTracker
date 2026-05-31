@@ -112,7 +112,7 @@ export async function updateGoal(goalId, goalData) {
     throw new Error("Failed to update goal");
   }
 
-  return response.json;
+  return response.json();
 }
 
 // Get the interventions from the visit
