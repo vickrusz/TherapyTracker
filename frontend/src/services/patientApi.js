@@ -1,5 +1,6 @@
 const API_BASE_URL =
-  import.meta.env.VITE_BASE_URL || "http://localhost:5000/api";
+  import.meta.env.VITE_BASE_URL ||
+  "https://therapytracker-api.onrender.com/api";
 
 console.log("API_BASE_URL:", API_BASE_URL);
 
