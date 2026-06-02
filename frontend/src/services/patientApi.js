@@ -1,6 +1,8 @@
 const API_BASE_URL =
   import.meta.env.VITE_BASE_URL || "http://localhost:5000/api";
 
+console.log("API_BASE_URL:", API_BASE_URL);
+
 // This is for the GET request many patients
 export async function getPatients() {
   const response = await fetch(`${API_BASE_URL}/patients`);
