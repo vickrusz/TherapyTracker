@@ -33,7 +33,7 @@ export async function createPatient(patientData) {
 
 // This is for getting one patient at a time
 export async function getPatientById(id) {
-  const response = await fetch(`http://localhost:5000/api/patients/${id}`);
+  const response = await fetch(`${API_BASE_URL}/patients/${id}`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch patient");
@@ -43,9 +43,7 @@ export async function getPatientById(id) {
 
 // This is to retrieve a patient's visits
 export async function getVisitsByPatient(id) {
-  const response = await fetch(
-    `http://localhost:5000/api/patients/${id}/visits`
-  );
+  const response = await fetch(`${API_BASE_URL}/patients/${id}/visits`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch visits");
@@ -56,16 +54,13 @@ export async function getVisitsByPatient(id) {
 
 // This is to create a visit for a patient
 export async function createVisit(patientId, visitData) {
-  const response = await fetch(
-    `http://localhost:5000/api/patients/${patientId}/visits`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(visitData),
-    }
-  );
+  const response = await fetch(`${API_BASE_URL}/patients/${patientId}/visits`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(visitData),
+  });
 
   if (!response.ok) {
     throw new Error("Failed to create visit");
@@ -120,9 +115,7 @@ export async function updateGoal(goalId, goalData) {
 
 // Get the interventions from the visit
 export async function getInterventionsByVisit(visitId) {
-  const res = await fetch(
-    `http://localhost:5000/api/visits/${visitId}/interventions`
-  );
+  const res = await fetch(`${API_BASE_URL}/visits/${visitId}/interventions`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch interventions");
@@ -133,16 +126,13 @@ export async function getInterventionsByVisit(visitId) {
 
 // Creating new interventions and save in a visit
 export async function createIntervention(visitId, data) {
-  const res = await fetch(
-    `http://localhost:5000/api/visits/${visitId}/interventions`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }
-  );
+  const res = await fetch(`${API_BASE_URL}/visits/${visitId}/interventions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
 
   if (!res.ok) {
     throw new Error("Failed to create intervention");
@@ -152,7 +142,7 @@ export async function createIntervention(visitId, data) {
 }
 // update a patient's information
 export async function updatePatient(id, patientData) {
-  const response = await fetch(`http://localhost:5000/api/patients/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/patients/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -170,7 +160,7 @@ export async function updatePatient(id, patientData) {
 // Update the intervention of a patient's visit
 export async function updateIntervention(interventionId, data) {
   const response = await fetch(
-    `http://localhost:5000/api/interventions/${interventionId}`,
+    `${API_BASE_URL}/interventions/${interventionId}`,
     {
       method: "PUT",
       headers: {
@@ -190,7 +180,7 @@ export async function updateIntervention(interventionId, data) {
 // This deletes an intervention from a patient
 export async function deleteIntervention(interventionId) {
   const response = await fetch(
-    `http://localhost:5000/api/interventions/${interventionId}`,
+    `${API_BASE_URL}/interventions/${interventionId}`,
     {
       method: "DELETE",
     }
