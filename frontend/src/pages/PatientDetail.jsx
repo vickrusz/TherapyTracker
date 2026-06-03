@@ -11,6 +11,7 @@ import {
   updateGoal,
   deleteIntervention,
   getGoalsByPatient,
+  deleteGoal,
 } from "../services/patientApi";
 
 function getTodayDate() {
@@ -340,6 +341,17 @@ export default function PatientDetail() {
     }
   }
 
+  async function handleDeleteGoal(goalId) {
+    try {
+      await deleteGoal(goalId);
+
+      setGoals((prev) => prev.filter((goal) => goal.id !== goalId));
+    } catch (err) {
+      console.error(err);
+      setError("Could not delete goal");
+    }
+  }
+
   if (loading) return <p>Loading Patient...</p>;
   if (error) return <p>{error}</p>;
   if (!patient) return <p>Patient not found</p>;
@@ -507,6 +519,12 @@ export default function PatientDetail() {
                   <br />
                   <button type="button" onClick={() => startEditingGoal(goal)}>
                     Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteGoal(goal.id)}
+                  >
+                    Delete
                   </button>
                 </>
               )}

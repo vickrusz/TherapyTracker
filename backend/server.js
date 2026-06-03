@@ -323,6 +323,27 @@ app.delete("/api/interventions/:id", async (req, res) => {
   }
 });
 
+app.delete("/api/goals/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const goalId = Number(id);
+
+    if (!goalId) {
+      return res.status(400).json({ error: "Valid goal id is required" });
+    }
+
+    await prisma.patientGoal.delete({
+      where: { id: goalId },
+    });
+
+    res.json({ message: "Goal deleted" });
+  } catch (error) {
+    console.error("Error deleting goal:", error);
+    res.status(500).json({ error: "Failed to delete goal" });
+  }
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
