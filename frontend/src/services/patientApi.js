@@ -205,3 +205,16 @@ export async function deleteGoal(goalId) {
 
   return response.json();
 }
+
+// This deletes a patient
+export async function deletePatient(patientId) {
+  const response = await fetch(`${API_BASE_URL}/patients/${patientId}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete patient");
+  }
+
+  return response.json();
+}

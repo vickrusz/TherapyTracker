@@ -323,6 +323,7 @@ app.delete("/api/interventions/:id", async (req, res) => {
   }
 });
 
+// delete goals from a patient
 app.delete("/api/goals/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -341,6 +342,25 @@ app.delete("/api/goals/:id", async (req, res) => {
   } catch (error) {
     console.error("Error deleting goal:", error);
     res.status(500).json({ error: "Failed to delete goal" });
+  }
+});
+
+// Delete a patient
+app.delete("/api/patients/:id", async (req, res) => {
+  try {
+    const patientId = Number(req.params.id);
+
+    if (!patientId) {
+      return res.status(400).json({ error: "Valid patient id is required" });
+    }
+    await prisma.patient.delete({
+      where: { id: patientId },
+    });
+
+    res.json({ message: "Patient deleted" });
+  } catch (error) {
+    console.error("Error deleting patient:", error);
+    res.status(500).json({ error: "Failed to delete patient" });
   }
 });
 
