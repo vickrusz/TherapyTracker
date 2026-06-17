@@ -1,11 +1,29 @@
 import { useEffect, useState } from "react";
-import { getPatients } from "../services/patientApi";
+import { getPatients, deletePatient } from "../services/patientApi";
 import { Link } from "react-router-dom";
 
 export default function Patients() {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  async function handleDeletePatient(patientId) {
+    const confirmed = window.confirm(
+      "Delete this patient? This cannot be undone."
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deletePatient(patientId);
+
+      setPatients((prev) => prev.filter((patient) => patient.id !== patientId));
+    } catch (err) {
+      console.error(err);
+
+      setError("Could not delete patient");
+    }
+  }
 
   useEffect(() => {
     async function loadPatients() {
@@ -55,6 +73,13 @@ export default function Patients() {
               <Link to={`/patients/${patient.id}`}>
                 <button type="button">View Details</button>
               </Link>
+
+              <button
+                type="button"
+                onClick={() => handleDeletePatient(patient.id)}
+              >
+                Delete
+              </button>
             </div>
           ))}
         </ul>
