@@ -13,6 +13,7 @@ import {
   getGoalsByPatient,
   deleteGoal,
 } from "../services/patientApi";
+import TherapeuticActivityForm from "../components/TherapeuticActivityForm";
 
 function getTodayDate() {
   return new Date().toISOString().split("T")[0];
@@ -587,6 +588,9 @@ export default function PatientDetail() {
               style={{ width: "100%" }}
             />
           </div>
+
+          <TherapeuticActivityForm />
+
           <br />
           <button type="submit">Save Visit</button>
         </form>
