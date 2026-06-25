@@ -3,6 +3,14 @@ import { useState } from "react";
 export default function TherapeuticActivityForm() {
   const [activity, setActivity] = useState("");
   const [assistLevel, setAssistLevel] = useState("");
+  const [focus, setFocus] = useState("");
+
+  const narrative =
+    activity && assistLevel
+      ? `Pt required skilled PTA intervention to address decreased BLE strength and impaired balance impacting functional mobility and safe transfers. Pt performed ${activity} requiring ${assistLevel}${
+          focus ? ` focusing on ${focus}` : ""
+        }. Skilled verbal/tactile cueing provided to improve proper form, weight shifting, and safety.`
+      : "";
 
   return (
     <div>
@@ -42,16 +50,23 @@ export default function TherapeuticActivityForm() {
         <option value="total A">total A</option>
       </select>
 
+      <br />
+      <br />
+
+      <label>Focus:</label>
+
+      <input
+        type="text"
+        value={focus}
+        onChange={(e) => setFocus(e.target.value)}
+        placeholder="leaning forward, pushing from armrests..."
+      />
+
       <hr />
 
-      <p>
-        <strong>Activity:</strong>
-        {activity}
-      </p>
-      <p>
-        <strong>Assist Level:</strong>
-        {assistLevel}
-      </p>
+      <h3>Generated Narrative</h3>
+
+      <p>{narrative}</p>
     </div>
   );
 }
