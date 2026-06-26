@@ -4,10 +4,15 @@ export default function TherapeuticActivityForm() {
   const [activity, setActivity] = useState("");
   const [assistLevel, setAssistLevel] = useState("");
   const [focus, setFocus] = useState("");
+  const [repetitions, setRepetitions] = useState("");
+
+  const activityPhrase = repetitions
+    ? `${repetitions} repetitions of ${activity}`
+    : activity;
 
   const narrative =
     activity && assistLevel
-      ? `Pt required skilled PTA intervention to address decreased BLE strength and impaired balance impacting functional mobility and safe transfers. Pt performed ${activity} requiring ${assistLevel}${
+      ? `Pt required skilled PTA intervention to address decreased BLE strength and impaired balance impacting functional mobility and safe transfers. Pt performed ${activityPhrase} requiring ${assistLevel}${
           focus ? ` focusing on ${focus}` : ""
         }. Skilled verbal/tactile cueing provided to improve proper form, weight shifting, and safety.`
       : "";
@@ -49,7 +54,18 @@ export default function TherapeuticActivityForm() {
         <option value="max A">max A</option>
         <option value="total A">total A</option>
       </select>
+      <br />
 
+      <br />
+
+      <label>Repetitions:</label>
+
+      <input
+        type="number"
+        value={repetitions}
+        onChange={(e) => setRepetitions(e.target.value)}
+        placeholder="ex: 10"
+      />
       <br />
       <br />
 
