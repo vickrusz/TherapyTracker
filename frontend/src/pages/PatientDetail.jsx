@@ -14,6 +14,7 @@ import {
   deleteGoal,
 } from "../services/patientApi";
 import TherapeuticActivityForm from "../components/TherapeuticActivityForm";
+import TherapeuticExerciseForm from "../components/TherapeuticExerciseForm";
 
 function getTodayDate() {
   return new Date().toISOString().split("T")[0];
@@ -590,6 +591,7 @@ export default function PatientDetail() {
           </div>
 
           <TherapeuticActivityForm />
+          <TherapeuticExerciseForm />
 
           <br />
           <button type="submit">Save Visit</button>
