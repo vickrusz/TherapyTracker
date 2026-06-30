@@ -15,6 +15,15 @@ export default function TherapeuticExerciseForm() {
         }. Pt requires skilled manual and verbal cueing to improve proper form, muscle activation, and safety, justifying ongoing need for skilled therapy.`
       : "";
 
+  const copyNarrative = async () => {
+    try {
+      await navigator.clipboard.writeText(narrative);
+      alert("Narrative copied!");
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
   return (
     <div>
       <h2>Therapeutic Exercise</h2>
@@ -63,6 +72,10 @@ export default function TherapeuticExerciseForm() {
 
       <h3>Generated Narrative</h3>
       <p>{narrative}</p>
+
+      <button type="button" onClick={copyNarrative} disabled={!narrative}>
+        Copy Narrative
+      </button>
     </div>
   );
 }

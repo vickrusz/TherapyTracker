@@ -17,6 +17,15 @@ export default function TherapeuticActivityForm() {
         }. Skilled verbal/tactile cueing provided to improve proper form, weight shifting, and safety.`
       : "";
 
+  const copyNarrative = async () => {
+    try {
+      await navigator.clipboard.writeText(narrative);
+      alert("Narrative copied!");
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
   return (
     <div>
       <h2>Therapeutic Activity</h2>
@@ -81,8 +90,11 @@ export default function TherapeuticActivityForm() {
       <hr />
 
       <h3>Generated Narrative</h3>
-
       <p>{narrative}</p>
+
+      <button type="button" onClick={copyNarrative} disabled={!narrative}>
+        Copy Narrative
+      </button>
     </div>
   );
 }
