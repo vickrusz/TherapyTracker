@@ -305,6 +305,35 @@ app.put("/api/goals/:id", async (req, res) => {
   }
 });
 
+// Delete a visit and its interventions
+app.delete("/api/visits/:id", async (req, res) => {
+  try {
+    const visitId = Number(req.params.id);
+
+    if (!Number.isInteger(visitId) || visitId <= 0) {
+      return res.status(400).json({ error: "Valid visit id is required" });
+    }
+
+    const visit = await prisma.visit.findUnique({
+      where: { id: visitId },
+      select: { id: true },
+    });
+
+    if (!visit) {
+      return res.status(404).json({ error: "Visit not found" });
+    }
+
+    await prisma.visit.delete({
+      where: { id: visitId },
+    });
+
+    res.json({ message: "Visit deleted" });
+  } catch (error) {
+    console.error("Error deleting visit:", error);
+    res.status(500).json({ error: "Failed to delete visit" });
+  }
+});
+
 // delete interventions from the visit
 app.delete("/api/interventions/:id", async (req, res) => {
   try {
