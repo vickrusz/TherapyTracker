@@ -68,6 +68,19 @@ export async function createVisit(patientId, visitData) {
   return response.json();
 }
 
+// Delete a visit and its treatment sections
+export async function deleteVisit(visitId) {
+  const response = await fetch(`${API_BASE_URL}/visits/${visitId}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete visit");
+  }
+
+  return response.json();
+}
+
 // Get goals of a patient
 export async function getGoalsByPatient(patientId) {
   const response = await fetch(`${API_BASE_URL}/patients/${patientId}/goals`);

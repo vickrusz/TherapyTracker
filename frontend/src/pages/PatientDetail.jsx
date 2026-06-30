@@ -4,6 +4,7 @@ import {
   getPatientById,
   getVisitsByPatient,
   createVisit,
+  deleteVisit,
   createIntervention,
   createGoal,
   updatePatient,
@@ -231,6 +232,27 @@ export default function PatientDetail() {
     } catch (err) {
       console.error(err);
       setError("Could not create visit");
+    }
+  }
+
+  async function handleDeleteVisit(visit) {
+    const visitDate = new Date(visit.visitDate).toLocaleDateString();
+    const confirmed = window.confirm(
+      `Delete the ${visit.visitType} visit from ${visitDate}? This will also delete its treatment sections.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteVisit(visit.id);
+      setVisits((prev) => prev.filter((item) => item.id !== visit.id));
+
+      if (showInterventionForm === visit.id) {
+        setShowInterventionForm(null);
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Could not delete visit");
     }
   }
 
@@ -611,10 +633,27 @@ export default function PatientDetail() {
                 marginBottom: "1rem",
               }}
             >
-              <h3 style={{ marginTop: 0 }}>
-                {new Date(visit.visitDate).toLocaleDateString()} -{" "}
-                {visit.visitType}
-              </h3>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: "1rem",
+                }}
+              >
+                <h3 style={{ marginTop: 0 }}>
+                  {new Date(visit.visitDate).toLocaleDateString()} -{" "}
+                  {visit.visitType}
+                </h3>
+
+                <button
+                  type="button"
+                  onClick={() => handleDeleteVisit(visit)}
+                  style={{ marginBottom: "1rem" }}
+                >
+                  Delete Visit
+                </button>
+              </div>
 
               {visit.quickCapture && (
                 <p>
