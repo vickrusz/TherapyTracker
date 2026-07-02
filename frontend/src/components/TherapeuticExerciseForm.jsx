@@ -2,15 +2,31 @@ import { useState } from "react";
 
 export default function TherapeuticExerciseForm() {
   const [position, setPosition] = useState("");
-  const [exercises, setExercises] = useState("");
+  const [exercises, setExercises] = useState([]);
   const [repetitions, setRepetitions] = useState("");
   const [resistance, setResistance] = useState("");
+  const exerciseOptions = [
+    "knee extension",
+    "hip flexion",
+    "hip abduction",
+    "hip extension",
+    "ankle pumps",
+    "marching",
+  ];
+
+  const toggleExercise = (exercise) => {
+    setExercises((prev) =>
+      prev.includes(exercise)
+        ? prev.filter((e) => e !== exercise)
+        : [...prev, exercise]
+    );
+  };
 
   const narrative =
     position && exercises
-      ? `Pt performing BLE therapeutic exercises in ${position} including ${exercises}${
-          repetitions ? ` x ${repetitions} reps` : ""
-        }${
+      ? `Pt performing BLE therapeutic exercises in ${position} including ${exercises.join(
+          ", "
+        )}${repetitions ? ` x ${repetitions} reps` : ""}${
           resistance ? ` with ${resistance} resistance` : ""
         }. Pt requires skilled manual and verbal cueing to improve proper form, muscle activation, and safety, justifying ongoing need for skilled therapy.`
       : "";
@@ -62,11 +78,18 @@ export default function TherapeuticExerciseForm() {
       <br />
       <br />
 
-      <textarea
-        value={exercises}
-        onChange={(e) => setExercises(e.target.value)}
-        placeholder="knee extension, hip flexion, hip abduction"
-      />
+      <h3>Exercises</h3>
+
+      {exerciseOptions.map((exercise) => (
+        <label key={exercise} style={{ display: "block" }}>
+          <input
+            type="checkbox"
+            checked={exercises.includes(exercise)}
+            onChange={() => toggleExercise(exercise)}
+          />
+          {exercise}
+        </label>
+      ))}
 
       <hr />
 
