@@ -17,6 +17,7 @@ import {
 import TherapeuticActivityForm from "../components/TherapeuticActivityForm";
 import TherapeuticExerciseForm from "../components/TherapeuticExerciseForm";
 import GaitForm from "../components/GaitForm";
+import NeuroReedForm from "../components/NeuroReedForm";
 
 function getTodayDate() {
   return new Date().toISOString().split("T")[0];
@@ -616,6 +617,7 @@ export default function PatientDetail() {
           <TherapeuticActivityForm />
           <TherapeuticExerciseForm />
           <GaitForm />
+          <NeuroReedForm />
 
           <br />
           <button type="submit">Save Visit</button>

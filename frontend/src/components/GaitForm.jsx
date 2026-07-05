@@ -80,6 +80,7 @@ export default function GaitForm() {
         onChange={(e) => setGaitQuality(e.target.value)}
         placeholder="decreased step length, decreased heel strike"
       />
+
       <hr />
 
       <h3>Generated Narrative</h3>
