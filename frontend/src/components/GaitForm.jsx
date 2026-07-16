@@ -32,7 +32,7 @@ export default function GaitForm() {
         <option value="Rollator">Rollator</option>
         <option value="Rolling Walker">Rolling Walker</option>
         <option value="Ustep walker">Ustep walker</option>
-        <option value="Single Point Cane">Ustep walker</option>
+        <option value="Single Point Cane">Single Point Cane</option>
         <option value="No assistive device">No assistive device</option>
       </select>
 
