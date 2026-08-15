@@ -11,7 +11,7 @@ export default function NeuroReedForm() {
       ? `Pt required skilled PTA intervention to address impaired dynamic ${position} balance impacting postural control impacting safe functional mobiliity and ADLs. Balance activities in ${position} including ${balanceActivity} ${
           support ? `with ${support}` : ""
         }${
-          details ? `. ${details}` : ""
+          details ? `${details}` : ""
         }. Skilled verbal/manual cueing provided to improve balance reactions, postural control, coordination, and safety. `
       : "";
 

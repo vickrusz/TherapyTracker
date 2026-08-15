@@ -1,30 +1,75 @@
 import { useState } from "react";
 
 export default function TherapeuticExerciseForm() {
-  const [position, setPosition] = useState("");
-  const [exercises, setExercises] = useState([]);
+  const [groups, setGroups] = useState({
+    supine: [],
+    sidelying: [],
+    prone: [],
+    sitting: [],
+    standing: [],
+  });
+
   const [repetitions, setRepetitions] = useState("");
   const [resistance, setResistance] = useState("");
-  const exerciseOptions = [
-    "knee extension",
-    "hip flexion",
-    "hip abduction",
-    "hip extension",
-    "ankle pumps",
-    "marching",
-  ];
 
-  const toggleExercise = (exercise) => {
-    setExercises((prev) =>
-      prev.includes(exercise)
-        ? prev.filter((e) => e !== exercise)
-        : [...prev, exercise]
-    );
+  const exerciseGroups = {
+    supine: [
+      "heel slides",
+      "SLR",
+      "bridging",
+      "scooting",
+      "TKE",
+      "quad sets",
+      "glute sets",
+      "ankle pumps",
+    ],
+
+    sidelying: ["hip abduction", "clamshell", "hip adduction"],
+
+    prone: ["prone on elbows", "hip extension", "hamstring curls"],
+
+    sitting: [
+      "knee extension",
+      "hip flexion",
+      "hip abduction",
+      "ankle pumps",
+      "marching",
+    ],
+
+    standing: [
+      "hip flexion",
+      "hip abduction",
+      "hip extension",
+      "marching",
+      "heel raises",
+      "mini squats",
+    ],
   };
 
+  const toggleExercise = (group, exercise) => {
+    setGroups((prev) => {
+      const selectedExercises = prev[group];
+
+      return {
+        ...prev,
+
+        [group]: selectedExercises.includes(exercise)
+          ? selectedExercises.filter((e) => e !== exercise)
+          : [...selectedExercises, exercise],
+      };
+    });
+  };
+
+  const narrativeParts = Object.entries(groups)
+
+    .filter(([, exercises]) => exercises.length > 0)
+    .map(([group, exercises]) =>
+      exercises.map((exercise) => `${group} ${exercise}`).join(", ")
+    );
+
   const narrative =
-    position && exercises
-      ? `Pt performing BLE therapeutic exercises in ${position} including ${exercises.join(
+    narrativeParts.length > 0
+      ? `Pt performed BLE therapeutic exercises including ${narrativeParts.join(
           ", "
         )}${repetitions ? ` x ${repetitions} reps` : ""}${
           resistance ? ` with ${resistance} resistance` : ""
@@ -43,17 +88,6 @@ export default function TherapeuticExerciseForm() {
   return (
     <div>
       <h2>Therapeutic Exercise</h2>
-
-      <label>Position</label>
-      <select value={position} onChange={(e) => setPosition(e.target.value)}>
-        <option value="">Select Position</option>
-        <option value="supine">Supine</option>
-        <option value="sitting">Sitting</option>
-        <option value="standing">Standing</option>
-      </select>
-
-      <br />
-      <br />
 
       <label>Repetitions</label>
 
@@ -80,15 +114,22 @@ export default function TherapeuticExerciseForm() {
 
       <h3>Exercises</h3>
 
-      {exerciseOptions.map((exercise) => (
-        <label key={exercise} style={{ display: "block" }}>
-          <input
-            type="checkbox"
-            checked={exercises.includes(exercise)}
-            onChange={() => toggleExercise(exercise)}
-          />
-          {exercise}
-        </label>
+      {Object.entries(exerciseGroups).map(([group, exerciseOptions]) => (
+        <div key={group}>
+          <h4>{group}</h4>
+
+          {exerciseOptions.map((exercise) => (
+            <label key={`${group}-${exercise}`} style={{ display: "block" }}>
+              <input
+                type="checkbox"
+                checked={groups[group].includes(exercise)}
+                onChange={() => toggleExercise(group, exercise)}
+              />
+
+              {exercise}
+            </label>
+          ))}
+        </div>
       ))}
 
       <hr />
