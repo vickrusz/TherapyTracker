@@ -71,6 +71,8 @@ export default function PatientDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [activeTreatmentForm, setActiveTreatmentForm] = useState("therAct");
+
   function startEditingIntervention(intervention) {
     setEditingInterventionId(intervention.id);
 
@@ -568,6 +570,7 @@ export default function PatientDetail() {
       >
         {showForm ? "Cancel" : "+ Add Visit"}
       </button>
+
       {showForm && (
         <form
           onSubmit={handleVisitSubmit}
@@ -614,10 +617,68 @@ export default function PatientDetail() {
             />
           </div>
 
-          <TherapeuticActivityForm />
-          <TherapeuticExerciseForm />
-          <GaitForm />
-          <NeuroReedForm />
+          <div style={{ marginTop: "1rem", marginBottom: "1rem" }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                gap: "0.75rem",
+                marginBottom: "1rem",
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setActiveTreatmentForm("therAct")}
+                style={{
+                  fontWeight:
+                    activeTreatmentForm === "therAct" ? "bold" : "normal",
+                }}
+              >
+                Therapeutic Activity
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTreatmentForm("therEx")}
+                style={{
+                  fontWeight:
+                    activeTreatmentForm === "therEx" ? "bold" : "normal",
+                }}
+              >
+                Therapeutic Exercise
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTreatmentForm("gait")}
+                style={{
+                  fontWeight:
+                    activeTreatmentForm === "gait" ? "bold" : "normal",
+                }}
+              >
+                Gait Training
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTreatmentForm("neuroReed")}
+                style={{
+                  fontWeight:
+                    activeTreatmentForm === "neuroReed" ? "bold" : "normal",
+                }}
+              >
+                Neuro Re-ed / Balance
+              </button>
+            </div>
+
+            {activeTreatmentForm === "therAct" && <TherapeuticActivityForm />}
+
+            {activeTreatmentForm === "therEx" && <TherapeuticExerciseForm />}
+
+            {activeTreatmentForm === "gait" && <GaitForm />}
+
+            {activeTreatmentForm === "neuroReed" && <NeuroReedForm />}
+          </div>
 
           <br />
           <button type="submit">Save Visit</button>
