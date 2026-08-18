@@ -15,6 +15,9 @@ export default function TherapeuticExerciseForm() {
   const exerciseGroups = {
     supine: [
       "heel slides",
+      "hip abduction",
+      "hip external rotation",
+      "hip internal rotation",
       "SLR",
       "bridging",
       "scooting",
