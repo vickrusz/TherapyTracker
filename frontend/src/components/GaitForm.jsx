@@ -1,16 +1,163 @@
 import { useState } from "react";
 
 export default function GaitForm() {
-  const [device, setDevice] = useState("");
-  const [assistLevel, setAssistLevel] = useState("");
-  const [distance, setDistance] = useState("");
-  const [gaitQuality, setGaitQuality] = useState("");
+  const [gaitBouts, setGaitBouts] = useState([
+    {
+      distance: "",
+      reps: "",
+      surface: "",
+      device: "",
+      assistLevel: "",
+      seatedRestBreaks: "",
+      standingRestBreaks: "",
+      details: "",
+    },
+  ]);
+
+  const [clinicalFocus, setClinicalFocus] = useState([]);
+
+  const deviceOptions = [
+    "Rollator",
+    "Rolling Walker",
+    "Ustep walker",
+    "Single Point Cane",
+    "No assistive device",
+  ];
+
+  const assistOptions = [
+    "Independent",
+    "Supervision",
+    "SBA",
+    "CGA/SBA",
+    "CGA",
+    "min/CGA",
+    "min A",
+    "min/mod A",
+    "mod A",
+    "mod/max A",
+    "max A",
+    "total A",
+  ];
+
+  const surfaceOptions = [
+    "level indoor surface",
+    "carpet",
+    "uneven surface",
+    "outdoor pavement",
+    "grass",
+    "ramp",
+    "curb",
+  ];
+
+  const clinicalFocusOptions = [
+    "step length",
+    "foot clearance",
+    "heel strike",
+    "postural alignment",
+    "weight shifting",
+    "device management",
+    "turning",
+    "gait speed",
+    "cadence",
+    "sequencing",
+    "lower extremity advancement",
+  ];
+
+  const updateGaitBout = (index, field, value) => {
+    setGaitBouts((prev) =>
+      prev.map((bout, i) => (i === index ? { ...bout, [field]: value } : bout))
+    );
+  };
+
+  const addGaitBout = () => {
+    setGaitBouts((prev) => [
+      ...prev,
+      {
+        distance: "",
+        reps: "",
+        surface: "",
+        device: "",
+        assistLevel: "",
+        seatedRestBreaks: "",
+        standingRestBreaks: "",
+        details: "",
+      },
+    ]);
+  };
+
+  const removeGaitBout = (index) => {
+    setGaitBouts((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const toggleClinicalFocus = (focus) => {
+    setClinicalFocus((prev) =>
+      prev.includes(focus)
+        ? prev.filter((item) => item !== focus)
+        : [...prev, focus]
+    );
+  };
+
+  const formatGaitBout = (bout) => {
+    if (!bout.distance) return "";
+
+    const parts = [];
+
+    let distanceText = `${bout.distance} ft`;
+
+    if (bout.reps) {
+      distanceText += ` x ${bout.reps}`;
+    }
+
+    parts.push(distanceText);
+
+    if (bout.surface) {
+      parts.push(`over ${bout.surface}`);
+    }
+
+    if (bout.device) {
+      parts.push(`with ${bout.device}`);
+    }
+
+    if (bout.assistLevel) {
+      parts.push(`requiring ${bout.assistLevel}`);
+    }
+
+    if (bout.standingRestBreaks) {
+      parts.push(
+        `${bout.standingRestBreaks} standing rest ${
+          bout.standingRestBreaks === "1" ? "break" : "breaks"
+        }`
+      );
+    }
+
+    if (bout.seatedRestBreaks) {
+      parts.push(
+        `${bout.seatedRestBreaks} seated rest ${
+          bout.seatedRestBreaks === "1" ? "break" : "breaks"
+        }`
+      );
+    }
+
+    if (bout.details) {
+      parts.push(bout.details);
+    }
+
+    return parts.join(", ");
+  };
+
+  const gaitNarrative = gaitBouts
+    .map(formatGaitBout)
+    .filter(Boolean)
+    .join("; ");
+
+  const focusNarrative =
+    clinicalFocus.length > 0
+      ? ` with emphasis on ${clinicalFocus.join(", ")}`
+      : "";
 
   const narrative =
-    device && assistLevel && distance
-      ? `Pt required skilled PTA intervention to address impaired gait mechanics and balance affecting safe gait. Pt ambulating ${distance} ft with ${device} requiring ${assistLevel}${
-          gaitQuality ? ` with ${gaitQuality}` : ""
-        }. Skilled verbal/manual cueing provided to improve step length, posture, sequencing, cadence, heel strike, and safety during gait.`
+    gaitNarrative.length > 0
+      ? `Pt required skilled PTA intervention to address impaired gait mechanics and balance affecting safe functional mobility. Pt participated in gait training including ${gaitNarrative}${focusNarrative}. Skilled verbal/manual cueing provided as needed to improve gait mechanics, movement quality, and safety.`
       : "";
 
   const copyNarrative = async () => {
@@ -26,60 +173,155 @@ export default function GaitForm() {
     <div>
       <h2>Gait Training</h2>
 
-      <label>Assistive Device</label>
-      <select value={device} onChange={(e) => setDevice(e.target.value)}>
-        <option value="">Select device</option>
-        <option value="Rollator">Rollator</option>
-        <option value="Rolling Walker">Rolling Walker</option>
-        <option value="Ustep walker">Ustep walker</option>
-        <option value="Single Point Cane">Single Point Cane</option>
-        <option value="No assistive device">No assistive device</option>
-      </select>
+      {gaitBouts.map((bout, index) => (
+        <div
+          key={index}
+          style={{
+            border: "1px solid #ccc",
+            padding: "12px",
+            marginBottom: "16px",
+          }}
+        >
+          <h3>Gait Bout {index + 1}</h3>
 
-      <br />
-      <br />
+          <label>Distance (ft)</label>
+          <input
+            type="number"
+            value={bout.distance}
+            onChange={(e) => updateGaitBout(index, "distance", e.target.value)}
+            placeholder="250"
+          />
 
-      <label>Assist Level:</label>
-      <select
-        value={assistLevel}
-        onChange={(e) => setAssistLevel(e.target.value)}
-      >
-        <option value="">Select Assist Level</option>
-        <option value="Independent">Independent</option>
-        <option value="Supervision">Supervision</option>
-        <option value="SBA">SBA</option>
-        <option value="CGA/SBA">CGA/SBA</option>
-        <option value="CGA">CGA</option>
-        <option value="min/CGA">min/CGA</option>
-        <option value="min A">min A</option>
-        <option value="min/mod A">min/mod A</option>
-        <option value="mod A">mod A</option>
-        <option value="mod/max A">mod/max A</option>
-        <option value="max A">max A</option>
-        <option value="total A">total A</option>
-      </select>
+          <br />
+          <br />
 
-      <br />
-      <br />
+          <label>Number of Bouts / Reps</label>
+          <input
+            type="number"
+            value={bout.reps}
+            onChange={(e) => updateGaitBout(index, "reps", e.target.value)}
+            placeholder="2"
+          />
 
-      <label>Distance (ft)</label>
-      <input
-        type="number"
-        value={distance}
-        onChange={(e) => setDistance(e.target.value)}
-        placeholder="150"
-      />
+          <br />
+          <br />
 
-      <br />
-      <br />
+          <label>Surface</label>
+          <select
+            value={bout.surface}
+            onChange={(e) => updateGaitBout(index, "surface", e.target.value)}
+          >
+            <option value="">Select Surface</option>
 
-      <label>Gait Quality</label>
-      <input
-        type="text"
-        value={gaitQuality}
-        onChange={(e) => setGaitQuality(e.target.value)}
-        placeholder="decreased step length, decreased heel strike"
-      />
+            {surfaceOptions.map((surface) => (
+              <option key={surface} value={surface}>
+                {surface}
+              </option>
+            ))}
+          </select>
+
+          <br />
+          <br />
+
+          <label>Assistive Device</label>
+          <select
+            value={bout.device}
+            onChange={(e) => updateGaitBout(index, "device", e.target.value)}
+          >
+            <option value="">Select Device</option>
+
+            {deviceOptions.map((device) => (
+              <option key={device} value={device}>
+                {device}
+              </option>
+            ))}
+          </select>
+
+          <br />
+          <br />
+
+          <label>Assist Level</label>
+          <select
+            value={bout.assistLevel}
+            onChange={(e) =>
+              updateGaitBout(index, "assistLevel", e.target.value)
+            }
+          >
+            <option value="">Select Assist Level</option>
+
+            {assistOptions.map((assist) => (
+              <option key={assist} value={assist}>
+                {assist}
+              </option>
+            ))}
+          </select>
+
+          <br />
+          <br />
+
+          <label>Standing Rest Breaks</label>
+          <input
+            type="number"
+            value={bout.standingRestBreaks}
+            onChange={(e) =>
+              updateGaitBout(index, "standingRestBreaks", e.target.value)
+            }
+            min="0"
+          />
+
+          <br />
+          <br />
+
+          <label>Seated Rest Breaks</label>
+          <input
+            type="number"
+            value={bout.seatedRestBreaks}
+            onChange={(e) =>
+              updateGaitBout(index, "seatedRestBreaks", e.target.value)
+            }
+            min="0"
+          />
+
+          <br />
+          <br />
+
+          <label>Details / Gait Quality</label>
+          <input
+            type="text"
+            value={bout.details}
+            onChange={(e) => updateGaitBout(index, "details", e.target.value)}
+            placeholder="decreased step length, cues for larger steps"
+          />
+
+          <br />
+          <br />
+
+          {gaitBouts.length > 1 && (
+            <button type="button" onClick={() => removeGaitBout(index)}>
+              Remove Gait Bout
+            </button>
+          )}
+        </div>
+      ))}
+
+      <button type="button" onClick={addGaitBout}>
+        + Add Gait Bout
+      </button>
+
+      <hr />
+
+      <h3>Clinical Focus</h3>
+
+      {clinicalFocusOptions.map((focus) => (
+        <label key={focus} style={{ display: "block" }}>
+          <input
+            type="checkbox"
+            checked={clinicalFocus.includes(focus)}
+            onChange={() => toggleClinicalFocus(focus)}
+          />
+          {focus}
+        </label>
+      ))}
 
       <hr />
 
