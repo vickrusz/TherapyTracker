@@ -22,6 +22,7 @@ export default function NeuroReedForm() {
     "bilateral UE support",
     "handheld assist",
     "bar support",
+    "rollator support",
     "rolling walker support",
     "cane support",
   ];

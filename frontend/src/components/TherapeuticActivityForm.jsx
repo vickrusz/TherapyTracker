@@ -71,6 +71,7 @@ export default function TherapeuticActivityForm() {
 
       <input
         type="number"
+        min="1"
         value={repetitions}
         onChange={(e) => setRepetitions(e.target.value)}
         placeholder="ex: 10"
