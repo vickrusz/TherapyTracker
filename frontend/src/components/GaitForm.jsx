@@ -3,8 +3,7 @@ import { useState } from "react";
 export default function GaitForm() {
   const [gaitBouts, setGaitBouts] = useState([
     {
-      distance: "",
-      reps: "",
+      distances: [""],
       surface: "",
       device: "",
       assistLevel: "",
@@ -21,6 +20,7 @@ export default function GaitForm() {
     "Rolling Walker",
     "Ustep walker",
     "Single Point Cane",
+    "Quad cane",
     "No assistive device",
   ];
 
@@ -39,15 +39,7 @@ export default function GaitForm() {
     "total A",
   ];
 
-  const surfaceOptions = [
-    "level indoor surface",
-    "carpet",
-    "uneven surface",
-    "outdoor pavement",
-    "grass",
-    "ramp",
-    "curb",
-  ];
+  const surfaceOptions = ["level indoor surface", "uneven surface", "other"];
 
   const clinicalFocusOptions = [
     "step length",
@@ -69,12 +61,53 @@ export default function GaitForm() {
     );
   };
 
+  const updateDistance = (boutIndex, distanceIndex, value) => {
+    setGaitBouts((prev) =>
+      prev.map((bout, i) => {
+        if (i !== boutIndex) return bout;
+
+        const updatedDistances = [...bout.distances];
+        updatedDistances[distanceIndex] = value;
+
+        return {
+          ...bout,
+          distances: updatedDistances,
+        };
+      })
+    );
+  };
+
+  const addDistance = (boutIndex) => {
+    setGaitBouts((prev) =>
+      prev.map((bout, i) =>
+        i === boutIndex
+          ? {
+              ...bout,
+              distances: [...bout.distances, ""],
+            }
+          : bout
+      )
+    );
+  };
+
+  const removeDistance = (boutIndex, distanceIndex) => {
+    setGaitBouts((prev) =>
+      prev.map((bout, i) =>
+        i === boutIndex
+          ? {
+              ...bout,
+              distances: bout.distances.filter((_, j) => j !== distanceIndex),
+            }
+          : bout
+      )
+    );
+  };
+
   const addGaitBout = () => {
     setGaitBouts((prev) => [
       ...prev,
       {
-        distance: "",
-        reps: "",
+        distance: [""],
         surface: "",
         device: "",
         assistLevel: "",
@@ -98,14 +131,28 @@ export default function GaitForm() {
   };
 
   const formatGaitBout = (bout) => {
-    if (!bout.distance) return "";
+    const validDistances = bout.distances.filter(Boolean);
+
+    if (validDistances.length === 0) return "";
 
     const parts = [];
 
-    let distanceText = `${bout.distance} ft`;
+    const allSameDistance =
+      validDistances.length > 1 &&
+      validDistances.every((distance) => distance === validDistances[0]);
 
-    if (bout.reps) {
-      distanceText += ` x ${bout.reps}`;
+    let distanceText = "";
+
+    if (allSameDistance) {
+      distanceText = `${validDistances[0]} ft x ${validDistances.length}`;
+    } else if (validDistances.length === 1) {
+      distanceText = `${validDistances[0]} ft`;
+    } else {
+      const formattedDistances = validDistances.map(
+        (distance) => `${distance} ft`
+      );
+
+      distanceText = formattedDistances.join(", ");
     }
 
     parts.push(distanceText);
@@ -184,27 +231,36 @@ export default function GaitForm() {
         >
           <h3>Gait Bout {index + 1}</h3>
 
-          <label>Distance (ft)</label>
-          <input
-            type="number"
-            value={bout.distance}
-            onChange={(e) => updateGaitBout(index, "distance", e.target.value)}
-            placeholder="250"
-          />
+          <label>Walking Distances</label>
 
-          <br />
-          <br />
+          {bout.distances.map((distance, distanceIndex) => (
+            <div key={distanceIndex} style={{ marginBottom: "0.5rem" }}>
+              <input
+                type="number"
+                min="1"
+                value={distance}
+                onChange={(e) =>
+                  updateDistance(index, distanceIndex, e.target.value)
+                }
+                placeholder="100"
+              />
 
-          <label>Number of Bouts / Reps</label>
-          <input
-            type="number"
-            value={bout.reps}
-            onChange={(e) => updateGaitBout(index, "reps", e.target.value)}
-            placeholder="2"
-          />
+              <span> ft</span>
 
-          <br />
-          <br />
+              {bout.distances.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeDistance(index, distanceIndex)}
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          ))}
+
+          <button type="button" onClick={() => addDistance(index)}>
+            + Add Distance
+          </button>
 
           <label>Surface</label>
           <select
