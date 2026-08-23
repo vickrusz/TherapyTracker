@@ -107,7 +107,7 @@ export default function GaitForm() {
     setGaitBouts((prev) => [
       ...prev,
       {
-        distance: [""],
+        distances: [""],
         surface: "",
         device: "",
         assistLevel: "",
@@ -130,6 +130,20 @@ export default function GaitForm() {
     );
   };
 
+  const formatDistances = (distances) => {
+    const counts = {};
+
+    distances.forEach((distance) => {
+      counts[distance] = (counts[distance] || 0) + 1;
+    });
+
+    return Object.entries(counts)
+      .map(([distance, count]) =>
+        count > 1 ? `${distance} ft x ${count}` : `${distance} ft`
+      )
+      .join(", ");
+  };
+
   const formatGaitBout = (bout) => {
     const validDistances = bout.distances.filter(Boolean);
 
@@ -137,25 +151,7 @@ export default function GaitForm() {
 
     const parts = [];
 
-    const allSameDistance =
-      validDistances.length > 1 &&
-      validDistances.every((distance) => distance === validDistances[0]);
-
-    let distanceText = "";
-
-    if (allSameDistance) {
-      distanceText = `${validDistances[0]} ft x ${validDistances.length}`;
-    } else if (validDistances.length === 1) {
-      distanceText = `${validDistances[0]} ft`;
-    } else {
-      const formattedDistances = validDistances.map(
-        (distance) => `${distance} ft`
-      );
-
-      distanceText = formattedDistances.join(", ");
-    }
-
-    parts.push(distanceText);
+    parts.push(formatDistances(validDistances));
 
     if (bout.surface) {
       parts.push(`over ${bout.surface}`);
