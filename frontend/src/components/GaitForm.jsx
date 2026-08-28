@@ -7,6 +7,7 @@ export default function GaitForm() {
       surface: "",
       device: "",
       assistLevel: "",
+      numberOfAssist: "1",
       seatedRestBreaks: "",
       standingRestBreaks: "",
       details: "",
@@ -111,6 +112,7 @@ export default function GaitForm() {
         surface: "",
         device: "",
         assistLevel: "",
+        numberOfAssist: "1",
         seatedRestBreaks: "",
         standingRestBreaks: "",
         details: "",
@@ -162,7 +164,12 @@ export default function GaitForm() {
     }
 
     if (bout.assistLevel) {
-      parts.push(`requiring ${bout.assistLevel}`);
+      const assistText =
+        bout.numberOfAssist === "2"
+          ? `${bout.assistLevel} x 2`
+          : bout.assistLevel;
+
+      parts.push(`requiring ${assistText}`);
     }
 
     if (bout.standingRestBreaks) {
@@ -306,6 +313,20 @@ export default function GaitForm() {
                 {assist}
               </option>
             ))}
+          </select>
+
+          <br />
+          <br />
+
+          <label>Number of Assist</label>
+          <select
+            value={bout.numberOfAssist}
+            onChange={(e) =>
+              updateGaitBout(index, "numberOfAssist", e.target.value)
+            }
+          >
+            <option value="1">1 person</option>
+            <option value="2">2 people</option>
           </select>
 
           <br />
