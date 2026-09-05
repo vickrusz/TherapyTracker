@@ -3,6 +3,7 @@ import { useState } from "react";
 export default function TherapeuticActivityForm() {
   const [activity, setActivity] = useState("");
   const [assistLevel, setAssistLevel] = useState("");
+  const [numberOfAssist, setNumberOfAssist] = useState("1");
   const [focus, setFocus] = useState("");
   const [repetitions, setRepetitions] = useState("");
 
@@ -10,9 +11,12 @@ export default function TherapeuticActivityForm() {
     ? `${repetitions} repetitions of ${activity}`
     : activity;
 
+  const assistPhrase =
+    numberOfAssist === "2" ? `${assistLevel} x2` : assistLevel;
+
   const narrative =
     activity && assistLevel
-      ? `Pt required skilled PTA intervention to address decreased BLE strength and impaired balance impacting functional mobility and safe transfers. Pt performed ${activityPhrase} requiring ${assistLevel}${
+      ? `Pt required skilled PTA intervention to address decreased BLE strength and impaired balance impacting functional mobility and safe transfers. Pt performed ${activityPhrase} requiring ${assistPhrase}${
           focus ? ` focusing on ${focus}` : ""
         }. Skilled verbal/tactile cueing provided to improve proper form, weight shifting, and safety.`
       : "";
@@ -29,7 +33,6 @@ export default function TherapeuticActivityForm() {
   return (
     <div>
       <h2>Therapeutic Activity</h2>
-
       <label>Activity:</label>
       <select value={activity} onChange={(e) => setActivity(e.target.value)}>
         <option value="">Select Activity</option>
@@ -40,10 +43,8 @@ export default function TherapeuticActivityForm() {
         <option value="Floor Recovery">Floor Recovery</option>
         <option value="Other">Other</option>
       </select>
-
       <br />
       <br />
-
       <label>Assist Level:</label>
       <select
         value={assistLevel}
@@ -65,10 +66,17 @@ export default function TherapeuticActivityForm() {
       </select>
       <br />
 
+      <label>Number of Assist</label>
+      <select
+        value={numberOfAssist}
+        onChange={(e) => setNumberOfAssist(e.target.value)}
+      >
+        <option value="1">1 person</option>
+        <option value="2">2 people</option>
+      </select>
       <br />
 
       <label>Repetitions:</label>
-
       <input
         type="number"
         min="1"
@@ -78,21 +86,16 @@ export default function TherapeuticActivityForm() {
       />
       <br />
       <br />
-
       <label>Focus:</label>
-
       <input
         type="text"
         value={focus}
         onChange={(e) => setFocus(e.target.value)}
         placeholder="leaning forward, pushing from armrests..."
       />
-
       <hr />
-
       <h3>Generated Narrative</h3>
       <p>{narrative}</p>
-
       <button type="button" onClick={copyNarrative} disabled={!narrative}>
         Copy Narrative
       </button>
