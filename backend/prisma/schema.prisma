@@ -51,5 +51,7 @@ model VisitIntervention {
   createdAt       DateTime @default(now())
   visitId         Int
   clinicalDetails String?
+  details         Json?
+
   visit           Visit    @relation(fields: [visitId], references: [id], onDelete: Cascade)
 }
