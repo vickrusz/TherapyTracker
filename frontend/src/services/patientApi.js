@@ -153,6 +153,7 @@ export async function createIntervention(visitId, data) {
 
   return res.json();
 }
+
 // update a patient's information
 export async function updatePatient(id, patientData) {
   const response = await fetch(`${API_BASE_URL}/patients/${id}`, {

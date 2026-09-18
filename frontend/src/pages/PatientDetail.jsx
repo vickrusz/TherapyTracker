@@ -71,6 +71,12 @@ export default function PatientDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [therActData, setTherActData] = useState(null);
+
+  useEffect(() => {
+    console.log("Ther Act data received by PatientDetail:", therActData);
+  }, [therActData]);
+
   const [activeTreatmentForm, setActiveTreatmentForm] = useState("therAct");
 
   function startEditingIntervention(intervention) {
@@ -671,7 +677,9 @@ export default function PatientDetail() {
               </button>
             </div>
 
-            {activeTreatmentForm === "therAct" && <TherapeuticActivityForm />}
+            {activeTreatmentForm === "therAct" && (
+              <TherapeuticActivityForm onChange={setTherActData} />
+            )}
 
             {activeTreatmentForm === "therEx" && <TherapeuticExerciseForm />}
 

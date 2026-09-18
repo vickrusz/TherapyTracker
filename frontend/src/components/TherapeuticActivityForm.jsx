@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function TherapeuticActivityForm() {
+export default function TherapeuticActivityForm({ onChange }) {
   const [activity, setActivity] = useState("");
   const [assistLevel, setAssistLevel] = useState("");
   const [numberOfAssist, setNumberOfAssist] = useState("1");
@@ -20,6 +20,34 @@ export default function TherapeuticActivityForm() {
           focus ? ` focusing on ${focus}` : ""
         }. Skilled verbal/tactile cueing provided to improve proper form, weight shifting, and safety.`
       : "";
+
+  useEffect(() => {
+    if (!activity || !assistLevel) {
+      return;
+    }
+
+    const treatmentData = {
+      category: "therAct",
+      clinicalDetails: narrative,
+      details: {
+        activity,
+        assistLevel,
+        numberOfAssist,
+        repetitions: repetitions ? Number(repetitions) : null,
+        focus,
+      },
+    };
+
+    onChange(treatmentData);
+  }, [
+    activity,
+    assistLevel,
+    numberOfAssist,
+    repetitions,
+    focus,
+    narrative,
+    onChange,
+  ]);
 
   const copyNarrative = async () => {
     try {

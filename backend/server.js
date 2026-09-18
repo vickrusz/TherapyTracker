@@ -199,7 +199,7 @@ app.post("/api/patients/:id/visits", async (req, res) => {
 app.post("/api/visits/:visitId/interventions", async (req, res) => {
   try {
     const { visitId } = req.params;
-    const { category, minutes, clinicalDetails } = req.body;
+    const { category, minutes, clinicalDetails, details } = req.body;
 
     if (!category || !minutes) {
       return res.status(400).json({
@@ -212,6 +212,7 @@ app.post("/api/visits/:visitId/interventions", async (req, res) => {
         category,
         minutes: Number(minutes),
         clinicalDetails: clinicalDetails || null,
+        details: details || null,
         visitId: Number(visitId),
       },
     });
