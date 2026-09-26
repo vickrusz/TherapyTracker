@@ -6,6 +6,7 @@ export default function TherapeuticActivityForm({ onChange }) {
   const [numberOfAssist, setNumberOfAssist] = useState("1");
   const [focus, setFocus] = useState("");
   const [repetitions, setRepetitions] = useState("");
+  const [minutes, setMinutes] = useState("");
 
   const activityPhrase = repetitions
     ? `${repetitions} repetitions of ${activity}`
@@ -29,6 +30,7 @@ export default function TherapeuticActivityForm({ onChange }) {
     const treatmentData = {
       category: "therAct",
       clinicalDetails: narrative,
+      minutes: Number(minutes),
       details: {
         activity,
         assistLevel,
@@ -45,6 +47,7 @@ export default function TherapeuticActivityForm({ onChange }) {
     numberOfAssist,
     repetitions,
     focus,
+    minutes,
     narrative,
     onChange,
   ]);
@@ -61,6 +64,15 @@ export default function TherapeuticActivityForm({ onChange }) {
   return (
     <div>
       <h2>Therapeutic Activity</h2>
+      <label>
+        Minutes:
+        <input
+          type="number"
+          value={minutes}
+          onChange={(e) => setMinutes(e.target.value)}
+        />
+      </label>
+
       <label>Activity:</label>
       <select value={activity} onChange={(e) => setActivity(e.target.value)}>
         <option value="">Select Activity</option>
@@ -93,7 +105,7 @@ export default function TherapeuticActivityForm({ onChange }) {
         <option value="total A">total A</option>
       </select>
       <br />
-
+      <br />
       <label>Number of Assist</label>
       <select
         value={numberOfAssist}
@@ -103,7 +115,7 @@ export default function TherapeuticActivityForm({ onChange }) {
         <option value="2">2 people</option>
       </select>
       <br />
-
+      <br />
       <label>Repetitions:</label>
       <input
         type="number"

@@ -226,10 +226,19 @@ export default function PatientDetail() {
   // Create a visit, add it to the top of the UI without refreshing
   async function handleVisitSubmit(e) {
     e.preventDefault();
+    console.log("handleVisitSubmit fired", visitForm);
 
     try {
       const newVisit = await createVisit(id, visitForm);
 
+      if (therActData) {
+        const savedIntervention = await createIntervention(
+          newVisit.id,
+          therActData
+        );
+
+        console.log("Saved intervention:", savedIntervention);
+      }
       setVisits((prev) => [newVisit, ...prev]);
 
       setVisitForm({
@@ -277,7 +286,7 @@ export default function PatientDetail() {
   }
 
   // Create a treatment section for one visit.
-  // Only the matching visit is updtated in state.
+  // Only the matching visit is updated in state.
   async function handleInterventionSubmit(e, visitId) {
     e.preventDefault();
 
