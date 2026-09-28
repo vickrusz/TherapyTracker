@@ -72,10 +72,15 @@ export default function PatientDetail() {
   const [error, setError] = useState("");
 
   const [therActData, setTherActData] = useState(null);
+  const [therExData, setTherExData] = useState(null);
 
   useEffect(() => {
     console.log("Ther Act data received by PatientDetail:", therActData);
   }, [therActData]);
+
+  useEffect(() => {
+    console.log("Ther Ex data received by PatientDetail:", therExData);
+  }, [therExData]);
 
   const [activeTreatmentForm, setActiveTreatmentForm] = useState("therAct");
 
@@ -239,6 +244,13 @@ export default function PatientDetail() {
 
         console.log("Saved intervention:", savedIntervention);
       }
+
+      if (therExData) {
+        const savedTherEx = await createIntervention(newVisit.id, therExData);
+
+        console.log("Saved Ther Ex intervention:", savedTherEx);
+      }
+
       setVisits((prev) => [newVisit, ...prev]);
 
       setVisitForm({
@@ -690,7 +702,9 @@ export default function PatientDetail() {
               <TherapeuticActivityForm onChange={setTherActData} />
             )}
 
-            {activeTreatmentForm === "therEx" && <TherapeuticExerciseForm />}
+            {activeTreatmentForm === "therEx" && (
+              <TherapeuticExerciseForm onChange={setTherExData} />
+            )}
 
             {activeTreatmentForm === "gait" && <GaitForm />}
 

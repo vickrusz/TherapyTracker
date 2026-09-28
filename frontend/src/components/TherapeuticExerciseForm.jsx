@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { useEffect } from "react";
 
-export default function TherapeuticExerciseForm() {
+export default function TherapeuticExerciseForm({ onChange }) {
   const [groups, setGroups] = useState({
     supine: [],
     sidelying: [],
@@ -11,6 +12,7 @@ export default function TherapeuticExerciseForm() {
 
   const [repetitions, setRepetitions] = useState("");
   const [resistance, setResistance] = useState("");
+  const [minutes, setMinutes] = useState("");
 
   const exerciseGroups = {
     supine: [
@@ -79,6 +81,25 @@ export default function TherapeuticExerciseForm() {
         }. Pt requires skilled manual and verbal cueing to improve proper form, muscle activation, and safety, justifying ongoing need for skilled therapy.`
       : "";
 
+  useEffect(() => {
+    if (!onChange || !narrative || !minutes) {
+      return;
+    }
+
+    const treatmentData = {
+      category: "therEx",
+      minutes: Number(minutes),
+      clinicalDetails: narrative,
+      details: {
+        groups,
+        repetitions: repetitions ? Number(repetitions) : null,
+        resistance: resistance || null,
+      },
+    };
+
+    onChange(treatmentData);
+  }, [groups, repetitions, resistance, minutes, narrative, onChange]);
+
   const copyNarrative = async () => {
     try {
       await navigator.clipboard.writeText(narrative);
@@ -91,6 +112,17 @@ export default function TherapeuticExerciseForm() {
   return (
     <div>
       <h2>Therapeutic Exercise</h2>
+
+      <label>Minutes</label>
+
+      <input
+        type="number"
+        value={minutes}
+        onChange={(e) => setMinutes(e.target.value)}
+      />
+
+      <br />
+      <br />
 
       <label>Repetitions</label>
 
