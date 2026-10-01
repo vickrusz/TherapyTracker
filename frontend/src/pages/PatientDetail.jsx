@@ -234,24 +234,37 @@ export default function PatientDetail() {
     console.log("handleVisitSubmit fired", visitForm);
 
     try {
+      // This is creating a new visit, wait for the patientId with the visitForm
       const newVisit = await createVisit(id, visitForm);
 
-      if (therActData) {
-        const savedIntervention = await createIntervention(
-          newVisit.id,
-          therActData
-        );
+      // Define an array called savedInterventions, which will save all interventions into an array
+      const savedInterventions = [];
 
-        console.log("Saved intervention:", savedIntervention);
+      // If there is Ther Act data entered, create an intervention with Ther Act data with a visitId
+      if (therActData) {
+        const savedTherAct = await createIntervention(newVisit.id, therActData);
+
+        // push the Ther Act data into savedInterventions array
+        savedInterventions.push(savedTherAct);
+        console.log("Saved Ther Act:", savedTherAct);
       }
 
+      // If there is Ther Ex data, create intervention with Ther Ex with a visitId
       if (therExData) {
         const savedTherEx = await createIntervention(newVisit.id, therExData);
 
+        // push the Ther Ex data into savedInterventions array
+        savedInterventions.push(savedTherEx);
         console.log("Saved Ther Ex intervention:", savedTherEx);
       }
 
-      setVisits((prev) => [newVisit, ...prev]);
+      setVisits((prev) => [
+        {
+          ...newVisit,
+          interventions: savedInterventions,
+        },
+        ...prev,
+      ]);
 
       setVisitForm({
         visitDate: getTodayDate(), // defaults to today
