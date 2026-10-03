@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function GaitForm() {
+export default function GaitForm({ onChange }) {
   const [gaitBouts, setGaitBouts] = useState([
     {
       distances: [""],
@@ -15,6 +15,8 @@ export default function GaitForm() {
   ]);
 
   const [clinicalFocus, setClinicalFocus] = useState([]);
+
+  const [minutes, setMinutes] = useState("");
 
   const deviceOptions = [
     "Rollator",
@@ -210,6 +212,18 @@ export default function GaitForm() {
       ? `Pt required skilled PTA intervention to address impaired gait mechanics and balance affecting safe functional mobility. Pt participated in gait training including ${gaitNarrative}${focusNarrative}. Skilled verbal/manual cueing provided as needed to improve gait mechanics, movement quality, and safety.`
       : "";
 
+  useEffect(() => {
+    onChange?.({
+      category: "gait",
+      minutes,
+      clinicalDetails: narrative,
+      details: {
+        gaitBouts,
+        clinicalFocus,
+      },
+    });
+  }, [gaitBouts, clinicalFocus, minutes]);
+
   const copyNarrative = async () => {
     try {
       await navigator.clipboard.writeText(narrative);
@@ -222,6 +236,14 @@ export default function GaitForm() {
   return (
     <div>
       <h2>Gait Training</h2>
+
+      <label>Gait Training Minutes</label>
+      <input
+        type="number"
+        min="0"
+        value={minutes}
+        onChange={(e) => setMinutes(e.target.value)}
+      />
 
       {gaitBouts.map((bout, index) => (
         <div
