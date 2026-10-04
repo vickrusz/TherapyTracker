@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function NeuroReedForm() {
+export default function NeuroReedForm({ onChange }) {
   const [activities, setActivities] = useState([
     {
       position: "",
@@ -13,6 +13,7 @@ export default function NeuroReedForm() {
 
   const [clinicalFocus, setClinicalFocus] = useState([]);
   const [functionalCarryover, setFunctionalCarryover] = useState([]);
+  const [minutes, setMinutes] = useState("");
 
   const positionOptions = ["sitting", "standing"];
 
@@ -146,6 +147,32 @@ export default function NeuroReedForm() {
       ? `Pt required skilled PTA intervention to address impaired balance and postural control impacting safe functional mobility and ADLs. Pt participated in neuromuscular reeducation activities including ${activityNarrative}${focusNarrative}${carryoverNarrative}. Skilled verbal/manual cueing provided as needed to improve balance reactions, postural control, coordination, movement quality, and safety.`
       : "";
 
+  useEffect(() => {
+    if (!onChange || !narrative || !minutes) {
+      return;
+    }
+
+    const neuroReedData = {
+      category: "neuroReed",
+      minutes: Number(minutes),
+      clinicalDetails: narrative,
+      details: {
+        activities,
+        clinicalFocus,
+        functionalCarryover,
+      },
+    };
+
+    onChange(neuroReedData);
+  }, [
+    activities,
+    clinicalFocus,
+    functionalCarryover,
+    minutes,
+    narrative,
+    onChange,
+  ]);
+
   const copyNarrative = async () => {
     try {
       await navigator.clipboard.writeText(narrative);
@@ -158,6 +185,14 @@ export default function NeuroReedForm() {
   return (
     <div>
       <h2>Neuromuscular Reeducation</h2>
+
+      <label>Minutes</label>
+
+      <input
+        type="number"
+        value={minutes}
+        onChange={(e) => setMinutes(e.target.value)}
+      />
 
       {activities.map((item, index) => (
         <div

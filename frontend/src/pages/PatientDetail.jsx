@@ -74,6 +74,7 @@ export default function PatientDetail() {
   const [therActData, setTherActData] = useState(null);
   const [therExData, setTherExData] = useState(null);
   const [gaitData, setGaitData] = useState(null);
+  const [neuroReedData, setNeuroReedData] = useState(null);
 
   useEffect(() => {
     console.log("Ther Act data received by PatientDetail:", therActData);
@@ -86,6 +87,10 @@ export default function PatientDetail() {
   useEffect(() => {
     console.log("Gait data received by PatientDetail:", gaitData);
   }, [gaitData]);
+
+  useEffect(() => {
+    console.log("Neuro Reed data received by PatientDetail", neuroReedData);
+  }, [neuroReedData]);
 
   const [activeTreatmentForm, setActiveTreatmentForm] = useState("therAct");
 
@@ -270,6 +275,18 @@ export default function PatientDetail() {
         // push the Gait data into savedInterventions array
         savedInterventions.push(savedGait);
         console.log("Saved Gait intervention:", savedGait);
+      }
+
+      // If there is NeuroReed data, create intervention with neuroreed with a visitId
+      if (neuroReedData) {
+        const savedNeuroReed = await createIntervention(
+          newVisit.id,
+          neuroReedData
+        );
+
+        // push the neuroReed data into savedInterventions array
+        savedInterventions.push(savedNeuroReed);
+        console.log("Saved Neuro Reed intervention:", savedNeuroReed);
       }
 
       setVisits((prev) => [
@@ -737,7 +754,9 @@ export default function PatientDetail() {
               <GaitForm onChange={setGaitData} />
             )}
 
-            {activeTreatmentForm === "neuroReed" && <NeuroReedForm />}
+            {activeTreatmentForm === "neuroReed" && (
+              <NeuroReedForm onChange={setNeuroReedData} />
+            )}
           </div>
 
           <br />
