@@ -27,14 +27,17 @@ TherapyTracker aims to reduce documentation time by organizing common therapy in
 ## Tech Stack
 
 Frontend
+
 - React
 - Vite
 
 Backend
+
 - Node.js
 - Express
 
 Database
+
 - PostgreSQL
 - Prisma ORM
 
@@ -43,10 +46,35 @@ Database
 🚧 Active development
 
 Current focus includes:
-- Database integration
-- Documentation workflow improvements
+
+- Expanding database persistence and improving documentation workflows
 - AI-assisted note generation
 - Scheduling enhancements
+
+## Current Documentation Workflow
+
+TherapyTracker supports four intervention categories:
+
+- Therapeutic Activity
+- Therapeutic Exercise
+- Neuromuscular Re-education
+- Gait Training
+
+Intervention forms use React state to manage user input
+and connect to an Express backend with PostgreSQL
+and Prisma for database persistence.
+
+### QuickCapture
+
+QuickCapture currently manages treatment notes in
+React state without database persistence.
+
+Planned improvements include:
+
+- AI-assisted intervention categorization
+- Separate narrative generation for each intervention
+- Clinician review and editing before finalizing notes
+- Secure handling of clinical information
 
 ## Motivation
 
@@ -61,6 +89,8 @@ TherapyTracker was designed from firsthand clinical experience to reduce adminis
 - AI-assisted documentation
 - Family communication portal
 - HIPAA-compliant deployment
+- Medicare scheduling reminders
+- five visit PTA rule tracking for sup visits, 30 day visits
 
 ## Author
 
